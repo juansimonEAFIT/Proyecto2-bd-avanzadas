@@ -1,0 +1,73 @@
+services:
+  shard1:
+    image: postgres:16
+    container_name: campusconnect_shard1
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: campusconnect
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5433:5432"
+    volumes:
+      - shard1_data:/var/lib/postgresql/data
+      - ./shard1/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - campusconnect_sharding_net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d campusconnect" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  shard2:
+    image: postgres:16
+    container_name: campusconnect_shard2
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: campusconnect
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5434:5432"
+    volumes:
+      - shard2_data:/var/lib/postgresql/data
+      - ./shard2/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - campusconnect_sharding_net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d campusconnect" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  shard3:
+    image: postgres:16
+    container_name: campusconnect_shard3
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: campusconnect
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5435:5432"
+    volumes:
+      - shard3_data:/var/lib/postgresql/data
+      - ./shard3/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - campusconnect_sharding_net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d campusconnect" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  shard1_data:
+  shard2_data:
+  shard3_data:
+
+
+networks:
+  campusconnect_sharding_net:
+    driver: bridge
