@@ -98,7 +98,7 @@ social-network-distributed-db/
 │   └── results_template.md
 │
 └── README.md
-
+```
 ## Integrantes
 
 - Juan Simón Ospina
