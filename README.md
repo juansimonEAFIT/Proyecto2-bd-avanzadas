@@ -1,7 +1,7 @@
 # Proyecto 2: Arquitecturas Distribuidas - Red Social
 
 **Bases de Datos Avanzadas - SI3009 (2026-1)**
-**Ingeniería de Sistemas - Universidad del Valle**
+**Ingeniería de Sistemas - Universidad EAFIT**
 
 ---
 Alejandro
