@@ -30,12 +30,16 @@
 - [ ] Ejecutar funciones y verificar distribución de datos por partición
 - [ ] Crear documentación técnica de PostgreSQL en `docs/ARQUITECTURA.md`
 - [ ] Documentar el proceso de deployment paso a paso
+- [ ] BONUS: Diseñar y probar un escenario de replicación asíncrona en PostgreSQL
+- [ ] BONUS: Evaluar uso de un broker (RabbitMQ/Kafka) para desacoplar escritura y replicación
+- [ ] BONUS: Documentar trade-offs entre replicación sincrónica y asíncrona
 
 ### Entregable del integrante 1
 
 - Cluster PostgreSQL funcional con datos de prueba
 - Particionamiento horizontal documentado
 - Replicación configurada y verificada
+- Escenario bonus de replicación asíncrona documentado
 
 ### Definition of Done
 
@@ -62,12 +66,16 @@
 - [ ] Ejecutar la generación de datos y verificar la distribución en ranges
 - [ ] Crear documentación técnica de CockroachDB en `docs/ARQUITECTURA.md`
 - [ ] Documentar el auto-sharding y el protocolo Raft
+- [ ] BONUS: Configurar y documentar escenario de geodistribución con latencia simulada
+- [ ] BONUS: Ejecutar prueba de quórum con nodos insuficientes y registrar comportamiento del cluster
+- [ ] BONUS: Documentar impacto de geodistribución y quórum en disponibilidad y consistencia
 
 ### Entregable del integrante 2
 
 - Cluster CockroachDB funcional con datos de prueba
 - Auto-sharding documentado
 - Replicación y consenso explicados
+- Escenarios bonus de geodistribución y quórum documentados
 
 ### Definition of Done
 
@@ -97,12 +105,16 @@
 - [ ] Documentar el procedimiento de recuperación manual
 - [ ] Crear `experiments/analyze_postgres_results.py` para consolidar resultados
 - [ ] Documentar hallazgos en `docs/RESULTADOS.md`
+- [ ] BONUS: Diseñar una SAGA para operación larga en PostgreSQL como alternativa a 2PC
+- [ ] BONUS: Implementar compensaciones y registrar evidencia de rollback por pasos
+- [ ] BONUS: Comparar SAGA vs 2PC en complejidad y consistencia
 
 ### Entregable del integrante 3
 
 - Suite de experimentos PostgreSQL con resultados
 - Análisis de replicación y 2PC
 - Documentación de failover y recuperación
+- Escenario bonus SAGA en PostgreSQL con compensaciones
 
 ### Definition of Done
 
@@ -133,12 +145,16 @@
 - [ ] Crear `docs/RESUMEN_EJECUTIVO.md` con hallazgos y recomendaciones
 - [ ] Actualizar `README.md` principal si hace falta
 - [ ] Preparar la presentación final del proyecto
+- [ ] BONUS: Diseñar y documentar un flujo CQRS con dos microservicios (comandos y consultas)
+- [ ] BONUS: Integrar resultados de CQRS con comparación PostgreSQL vs NewSQL
+- [ ] BONUS: Extender el análisis comparativo final incluyendo CQRS, geodistribución, quórum, SAGA y replicación asíncrona
 
 ### Entregable del integrante 4
 
 - Análisis comparativo completo
 - Documentación CAP/PACELC
 - Presentación final lista
+- Integración final de todos los bonus en el informe comparativo
 
 ### Definition of Done
 

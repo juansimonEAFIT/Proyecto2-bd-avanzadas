@@ -4,6 +4,10 @@
 **Ingeniería de Sistemas - Universidad del Valle**
 
 ---
+Alejandro
+Sebastian
+Simon
+Daniel
 
 ## Índice
 
@@ -140,21 +144,27 @@ pip install python-dotenv
 ├── infra/
 │   ├── docker-compose.postgres.yml      # Config PostgreSQL (Primary + 2 Replicas)
 │   ├── docker-compose.cockroachdb.yml   # Config CockroachDB (3 nodos)
-│   └── docker-compose.latency.yml       # Config con simulación de latencia
+│   ├── docker-compose.latency.yml       # Config con simulación de latencia
+│   └── docker-compose.bonus-cqrs.yml    # Infra para bonus CQRS (write/read + broker)
 │
 ├── scripts/
 │   ├── postgres/
 │   │   ├── 01-init-primary.sql           # Inicialización tablas primarias
 │   │   ├── 02-distributed-transactions.sql # 2PC y procedimientos
 │   │   ├── 03-data-generation.sql        # Generación de datos sintéticos
-│   │   └── 04-experiments.sql            # Queries de experimentos
+│   │   ├── 04-experiments.sql            # Queries de experimentos
+│   │   ├── 05-bonus-async-replication.sql # Bonus replicación asincrónica
+│   │   └── 06-bonus-saga.sql             # Bonus SAGA con compensaciones
 │   │
 │   ├── cockroachdb/
 │   │   ├── 01-init-cockroachdb.sql       # Inicialización CockroachDB
 │   │   ├── 02-data-generation.sql        # Carga de datos
-│   │   └── 03-experiments.sql            # Queries CockroachDB
+│   │   ├── 03-experiments.sql            # Queries CockroachDB
+│   │   └── 04-bonus-quorum-geodistribution.sql # Bonus quorum + geodistribución
 │   │
 │   └── common/
+│       ├── 01-bonus-cqrs-command.sql     # Modelo de escritura CQRS
+│       ├── 02-bonus-cqrs-query.sql       # Modelo de lectura CQRS
 │       └── monitoring.sql                # Queries de monitoreo para ambos
 │
 ├── data/
@@ -165,17 +175,14 @@ pip install python-dotenv
 │   └── followers.json
 │
 ├── experiments/
-│   ├── exp1_latency_intra_shard.py       # Experimento: Latencia within-shard
-│   ├── exp2_latency_inter_shard.py       # Experimento: Latencia inter-shard
-│   ├── exp3_replication_sync.py          # Experimento: Sincronía vs Asincronía
-│   ├── exp4_distributed_transactions.py  # Experimento: 2PC
-│   ├── exp5_failover_recovery.py         # Experimento: Failover
-│   └── exp6_comparison.py                # Experimento: PostgreSQL vs CockroachDB
+│   ├── bonus_cqrs_demo.py                # Bonus CQRS end-to-end
+│   ├── bonus_saga_postgres.py            # Bonus SAGA en PostgreSQL
+│   └── bonus_quorum_geodistribution.ps1  # Bonus quorum/geodistribución
 │
 ├── docs/
 │   ├── ARQUITECTURA.md                   # Documentación de arquitectura
 │   ├── EXPERIMENTOS.md                   # Detalle de experimentos
-│   └── RESULTADOS.md                     # Análisis de resultados
+│   └── BONUS.md                          # Guía de ejecución de bonus
 │
 ├── Proyecto2.md                          # Requerimientos originales
 ├── README.md                             # Este archivo
@@ -257,6 +264,26 @@ docker exec -it cockroach-node1 ./cockroach sql --insecure --host=localhost:2625
 # Generar datos
 docker exec -it cockroach-node1 ./cockroach sql --insecure --host=localhost:26257 < scripts/cockroachdb/02-data-generation.sql
 ```
+
+### 7. Ejecutar Bonus Track
+
+```bash
+# CQRS (comando/consulta con dos bases)
+docker compose -f infra/docker-compose.bonus-cqrs.yml up -d
+python experiments/bonus_cqrs_demo.py
+
+# SAGA en PostgreSQL
+psql -h localhost -U admin -d social_network -f scripts/postgres/06-bonus-saga.sql
+python experiments/bonus_saga_postgres.py
+
+# Replicación asincrónica PostgreSQL
+psql -h localhost -U admin -d social_network -f scripts/postgres/05-bonus-async-replication.sql
+
+# Quórum y geodistribución CockroachDB (PowerShell)
+./experiments/bonus_quorum_geodistribution.ps1
+```
+
+Detalles completos en `docs/BONUS.md`.
 
 ---
 

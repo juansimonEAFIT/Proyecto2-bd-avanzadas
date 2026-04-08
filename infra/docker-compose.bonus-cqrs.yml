@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+  postgres-command:
+    image: postgres:15
+    container_name: bonus-postgres-command
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: social_command
+    ports:
+      - "5442:5432"
+    volumes:
+      - postgres_command_data:/var/lib/postgresql/data
+      - ../scripts/common/01-bonus-cqrs-command.sql:/docker-entrypoint-initdb.d/01-init.sql
+    networks:
+      - bonus_network
+
+  postgres-query:
+    image: postgres:15
+    container_name: bonus-postgres-query
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: social_query
+    ports:
+      - "5443:5432"
+    volumes:
+      - postgres_query_data:/var/lib/postgresql/data
+      - ../scripts/common/02-bonus-cqrs-query.sql:/docker-entrypoint-initdb.d/01-init.sql
+    networks:
+      - bonus_network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: bonus-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - bonus_network
+
+volumes:
+  postgres_command_data:
+  postgres_query_data:
+
+networks:
+  bonus_network:
+    driver: bridge
