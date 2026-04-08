@@ -54,18 +54,18 @@
 
 **Objetivo:** Configurar CockroachDB distribuido con 3 nodos y carga de datos automática.
 
-- [ ] Revisar Proyecto2.md y README.md del proyecto
-- [ ] Estudiar la arquitectura de CockroachDB: Raft, ranges y leaseholders
-- [ ] Crear `infra/docker-compose.cockroachdb.yml` con 3 nodos e inicialización del cluster
-- [ ] Levantar el cluster y verificar que todos los nodos estén activos
-- [ ] Acceder a la interfaz web de CockroachDB
-- [ ] Crear `scripts/cockroachdb/01-init-cockroachdb.sql` con tablas USERS, POSTS, COMMENTS, POST_LIKES, FOLLOWERS y distributed_transactions
-- [ ] Incluir índices secundarios y configuración de zonas opcional
-- [ ] Ejecutar el script de inicialización y verificar tablas creadas
-- [ ] Crear `scripts/cockroachdb/02-data-generation.sql` para poblar usuarios, posts, comentarios, followers y likes
-- [ ] Ejecutar la generación de datos y verificar la distribución en ranges
-- [ ] Crear documentación técnica de CockroachDB en `docs/ARQUITECTURA.md`
-- [ ] Documentar el auto-sharding y el protocolo Raft
+- [x] Revisar Proyecto2.md y README.md del proyecto
+- [x] Estudiar la arquitectura de CockroachDB: Raft, ranges y leaseholders
+- [x] Crear `infra/docker-compose.cockroachdb.yml` con 3 nodos e inicialización del cluster
+- [x] Levantar el cluster y verificar que todos los nodos estén activos
+- [x] Acceder a la interfaz web de CockroachDB
+- [x] Crear `scripts/cockroachdb/01-init-cockroachdb.sql` con tablas USERS, POSTS, COMMENTS, POST_LIKES, FOLLOWERS y distributed_transactions
+- [x] Incluir índices secundarios y configuración de zonas opcional
+- [x] Ejecutar el script de inicialización y verificar tablas creadas
+- [x] Crear `scripts/cockroachdb/02-data-generation.sql` para poblar usuarios, posts, comentarios, followers y likes
+- [x] Ejecutar la generación de datos y verificar la distribución en ranges
+- [x] Crear documentación técnica de CockroachDB en `docs/ARQUITECTURA.md`
+- [x] Documentar el auto-sharding y el protocolo Raft
 - [ ] BONUS: Configurar y documentar escenario de geodistribución con latencia simulada
 - [ ] BONUS: Ejecutar prueba de quórum con nodos insuficientes y registrar comportamiento del cluster
 - [ ] BONUS: Documentar impacto de geodistribución y quórum en disponibilidad y consistencia
