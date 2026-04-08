@@ -104,3 +104,4 @@ social-network-distributed-db/
 - Juan Simón Ospina
 - Sebastián Durán 
 - Daniel Arcila
+- Alejandro Sepúlveda 
