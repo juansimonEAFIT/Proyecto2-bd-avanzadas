@@ -1,0 +1,78 @@
+version: '3.9'
+
+services:
+  # CockroachDB Node 1
+  cockroach-node1:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroach-node1
+    ports:
+      - "26257:26257"
+      - "8080:8080"
+    volumes:
+      - cockroach1_data:/cockroach/cockroach-data
+    networks:
+      - social_network
+    command: start --insecure --listen-addr=cockroach-node1:26357 --http-addr=cockroach-node1:8080 --join=cockroach-node1:26357,cockroach-node2:26357,cockroach-node3:26357
+
+  # CockroachDB Node 2
+  cockroach-node2:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroach-node2
+    ports:
+      - "26258:26257"
+      - "8081:8080"
+    volumes:
+      - cockroach2_data:/cockroach/cockroach-data
+    networks:
+      - social_network
+    command: start --insecure --listen-addr=cockroach-node2:26357 --http-addr=cockroach-node2:8080 --join=cockroach-node1:26357,cockroach-node2:26357,cockroach-node3:26357
+    depends_on:
+      - cockroach-node1
+
+  # CockroachDB Node 3
+  cockroach-node3:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroach-node3
+    ports:
+      - "26259:26257"
+      - "8082:8080"
+    volumes:
+      - cockroach3_data:/cockroach/cockroach-data
+    networks:
+      - social_network
+    command: start --insecure --listen-addr=cockroach-node3:26357 --http-addr=cockroach-node3:8080 --join=cockroach-node1:26357,cockroach-node2:26357,cockroach-node3:26357
+    depends_on:
+      - cockroach-node1
+
+  # CockroachDB Init Service
+  cockroach-init:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroach-init
+    networks:
+      - social_network
+    command: init --insecure --host=cockroach-node1:26357
+    depends_on:
+      - cockroach-node1
+      - cockroach-node2
+      - cockroach-node3
+
+  # CockroachDB Admin UI
+  cockroach-ui:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroach-ui
+    ports:
+      - "8088:8080"
+    networks:
+      - social_network
+    command: node status --insecure --host=cockroach-node1:26357
+    depends_on:
+      - cockroach-init
+
+volumes:
+  cockroach1_data:
+  cockroach2_data:
+  cockroach3_data:
+
+networks:
+  social_network:
+    driver: bridge

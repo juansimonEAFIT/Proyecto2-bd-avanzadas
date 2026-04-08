@@ -1,0 +1,111 @@
+version: '3.9'
+
+services:
+  # Primary PostgreSQL Node
+  postgres-primary:
+    image: postgres:15
+    container_name: postgres-primary
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: social_network
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data
+      - ./scripts/postgres/01-init-primary.sql:/docker-entrypoint-initdb.d/01-init.sql
+    networks:
+      - social_network
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=replica"
+      - "-c"
+      - "max_wal_senders=10"
+      - "-c"
+      - "max_replication_slots=10"
+      - "-c"
+      - "synchronous_commit=on"
+      - "-c"
+      - "synchronous_standby_names='postgres-replica-1,postgres-replica-2'"
+
+  # Replica 1 Node
+  postgres-replica-1:
+    image: postgres:15
+    container_name: postgres-replica-1
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_replica1_data:/var/lib/postgresql/data
+    networks:
+      - social_network
+    command:
+      - "bash"
+      - "-c"
+      - |
+        until pg_basebackup -h postgres-primary -D /var/lib/postgresql/data -U admin -v -W -P 2>&1 | grep -q "transaction log start point"; do
+          echo 'Waiting for primary to be ready...'
+          sleep 1s
+        done
+        printf "%s\n" "standby_mode = 'on'" "primary_conninfo = 'host=postgres-primary port=5432 user=admin password=admin123'" > /var/lib/postgresql/data/recovery.conf
+        chmod 0600 /var/lib/postgresql/data/recovery.conf
+        exec postgres -c wal_level=replica -c max_wal_senders=10 -c max_replication_slots=10
+    depends_on:
+      - postgres-primary
+    environment:
+      PGPASSWORD: admin123
+
+  # Replica 2 Node
+  postgres-replica-2:
+    image: postgres:15
+    container_name: postgres-replica-2
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_replica2_data:/var/lib/postgresql/data
+    networks:
+      - social_network
+    command:
+      - "bash"
+      - "-c"
+      - |
+        until pg_basebackup -h postgres-primary -D /var/lib/postgresql/data -U admin -v -W -P 2>&1 | grep -q "transaction log start point"; do
+          echo 'Waiting for primary to be ready...'
+          sleep 1s
+        done
+        printf "%s\n" "standby_mode = 'on'" "primary_conninfo = 'host=postgres-primary port=5432 user=admin password=admin123'" > /var/lib/postgresql/data/recovery.conf
+        chmod 0600 /var/lib/postgresql/data/recovery.conf
+        exec postgres -c wal_level=replica -c max_wal_senders=10 -c max_replication_slots=10
+    depends_on:
+      - postgres-primary
+    environment:
+      PGPASSWORD: admin123
+
+  # pgAdmin for management (optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    networks:
+      - social_network
+    depends_on:
+      - postgres-primary
+
+volumes:
+  postgres_primary_data:
+  postgres_replica1_data:
+  postgres_replica2_data:
+
+networks:
+  social_network:
+    driver: bridge
