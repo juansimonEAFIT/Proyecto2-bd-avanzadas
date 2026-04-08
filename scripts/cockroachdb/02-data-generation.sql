@@ -1,12 +1,11 @@
 -- ============================================================================
--- GENERACIÓN DE DATOS PARA COCKROACHDB
+-- GENERACIÓN DE DATOS PARA COCKROACHDB - BIG DATA (20M REGISTROS)
 -- ============================================================================
+-- Escala: 100K usuarios, 5M posts, 3M comentarios, 2M followers, 10M likes
 
 -- ============================================================================
--- FUNCIÓN: Generar datos sintéticos de usuarios
+-- INSERTAR 100,000 USUARIOS
 -- ============================================================================
--- CockroachDB usa SERIAL para generar IDs automáticamente
-
 INSERT INTO users (user_id, username, email, full_name, bio, follower_count, following_count, post_count)
 SELECT 
     row_number() OVER () as user_id,
@@ -17,47 +16,92 @@ SELECT
     floor(random() * 100000)::int64 as follower_count,
     floor(random() * 50000)::int64 as following_count,
     floor(random() * 10000)::int64 as post_count
-FROM generate_series(1, 10000);
+FROM generate_series(1, 100000);
 
--- Insertar posts
+-- ============================================================================
+-- INSERTAR 5,000,000 POSTS (50x escala original)
+-- ============================================================================
 INSERT INTO posts (post_id, user_id, content, location, created_at)
 SELECT 
     row_number() OVER () as post_id,
-    floor(random() * 10000)::int64 as user_id,
-    'Post content #' || row_number() OVER () || ' with some hashtags #social #network #distributed' as content,
+    (floor(random() * 100000)::int64 + 1) as user_id,
+    'Post content #' || row_number() OVER () || ' with some hashtags #social #network #distributed #bigdata' as content,
     CASE 
         WHEN random() > 0.6 THEN 'Bogotá, Colombia' 
         WHEN random() > 0.3 THEN 'Medellín, Colombia'
         ELSE 'Cali, Colombia' 
     END as location,
-    now() - (random() * INTERVAL '90 days')::interval as created_at
-FROM generate_series(1, 50000);
-
--- Insertar comentarios
+    now() - (random() * INTERVAL '390 days')::interval as created_at
+FRO============================================================================
+-- INSERTAR 3,000,000 COMENTARIOS (100x escala original)
+-- ============================================================================
 INSERT INTO comments (comment_id, post_id, user_id, content, created_at)
 SELECT 
     row_number() OVER () as comment_id,
-    (floor(random() * 50000)::int64 + 1) as post_id,
-    (floor(random() * 10000)::int64 + 1) as user_id,
+    (floor(random() * 5000000)::int64 + 1) as post_id,
+    (floor(random() * 100000)::int64 + 1) as user_id,
     'Great post! #awesome #love' as content,
+    now() - (random() * INTERVAL '120 days')::interval as created_at
+FROM generate_series(1, 300 #love' as content,
     now() - (random() * INTERVAL '30 days')::interval as created_at
 FROM generate_series(1, 30000);
 
--- Insertar followers
+-- ============================================================================
+-- INSERTAR 2,000,000 FOLLOWERS (100x escala original, con deduplicación)
+-- ============================================================================
+WITH candidate_follows AS (
+    SELECT
+        (floor(random() * 100000)::int64 + 1) AS follower_id,
+        (floor(random() * 100000)::int64 + 1) AS following_id,
+        now() - (random() * INTERVAL '210 days')::interval AS created_at
+    FROM generate_series(1, 6000000)
+),
+ranked_follows AS (
+    SELECT
+        follower_id,
+        following_id,
+        created_at,
+        ROW_NUMBER() OVER (
+            PARTITION BY follower_id, following_id
+            ORDER BY created_at DESC
+        ) AS rn
+    FROM candidate_follows
+    WHERE follower_id != following_id
+)
 INSERT INTO followers (follower_id, following_id, created_at)
-SELECT 
-    (floor(random() * 10000)::int64 + 1) as follower_id,
-    (floor(random() * 10000)::int64 + 1) as following_id,
-    now() - (random() * INTERVAL '60 days')::interval as created_at
-FROM generate_series(1, 20000)
-WHERE (floor(random() * 10000)::int64 + 1) != (floor(random() * 10000)::int64 + 1);
+SELECT follower_id, following_id, created_at
+FROM ranked_follows
+WHERE rn = 1
+LIMIT 2000000;
 
--- Insertar post_likes
+-- ============================================================================
+-- INSERTAR 10,000,000 POST_LIKES (100x escala original, con deduplicación)
+-- ============================================================================
+WITH candidate_likes AS (
+    SELECT
+        (floor(random() * 5000000)::int64 + 1) AS post_id,
+        (floor(random() * 100000)::int64 + 1) AS user_id,
+        now() - (random() * INTERVAL '120 days')::interval AS created_at
+    FROM generate_series(1, 22000000)
+),
+ranked_likes AS (
+    SELECT
+        post_id,
+        user_id,
+        created_at,
+        ROW_NUMBER() OVER (
+            PARTITION BY post_id, user_id
+            ORDER BY created_at DESC
+        ) AS rn
+    FROM candidate_likes
+)
 INSERT INTO post_likes (like_id, post_id, user_id, created_at)
-SELECT 
-    row_number() OVER () as like_id,
-    (floor(random() * 50000)::int64 + 1) as post_id,
-    (floor(random() * 10000)::int64 + 1) as user_id,
-    now() - (random() * INTERVAL '30 days')::interval as created_at
-FROM generate_series(1, 100000);
+SELECT
+    ROW_NUMBER() OVER () AS like_id,
+    post_id,
+    user_id,
+    created_at
+FROM ranked_likes
+WHERE rn = 1
+LIMIT 10000000;
 
