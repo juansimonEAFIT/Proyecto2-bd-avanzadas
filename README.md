@@ -239,8 +239,7 @@ psql -h localhost -U admin -d social_network -c "SELECT fn_generate_users(10000)
 # Levantar contenedores CockroachDB
 docker-compose -f infra/docker-compose.cockroachdb.yml up -d
 
-# Esperar a que el cluster esté listo (esperar ~30 segundos)
-sleep 30
+# Esperar a que el cluster esté listo
 
 # Verificar estado del cluster
 docker exec -it cockroach-node1 ./cockroach node status --insecure --host=localhost:26257
