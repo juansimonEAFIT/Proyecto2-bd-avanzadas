@@ -17,15 +17,37 @@ Pasos:
    `python experiments/bonus_cqrs_demo.py`
 3. Validar que el evento se proyecte del modelo de comando al de lectura.
 
+Nota:
+- Este bonus muestra desacoplamiento entre escritura y lectura.
+- RabbitMQ se usa como soporte del flujo por eventos.
+
 ## 2. Replicacion Asincronica PostgreSQL
 
-Archivo:
+Archivos:
 - `scripts/postgres/05-bonus-async-replication.sql`
+- `experiments/bonus_async_replication_postgres.py`
 
 Pasos:
 1. Ejecutar script en PostgreSQL primary.
-2. Correr `CALL sp_async_write_benchmark(1000);` con `synchronous_commit = off`.
+2. Correr benchmark con `synchronous_commit = off`.
 3. Repetir con `synchronous_commit = on` y comparar latencia.
+
+Ejecucion recomendada:
+1. Cargar objetos SQL:
+   `psql -h localhost -U admin -d social_network -f scripts/postgres/05-bonus-async-replication.sql`
+2. Ejecutar benchmark automatizado:
+   `python experiments/bonus_async_replication_postgres.py`
+
+Evidencia validada:
+- el script fuerza una corrida sync real y luego una async
+- las replicas cambian de `sync_state = sync/potential` a `sync_state = async`
+- las filas quedan visibles en primary y replicas
+
+Ultima corrida registrada:
+- fecha: `2026-04-09`
+- sync: `9.373 ms`
+- async: `8.342 ms`
+- mejora async observada: `11.0%`
 
 ## 3. SAGA sobre PostgreSQL
 

@@ -19,20 +19,20 @@
 
 **Objetivo:** Configurar PostgreSQL distribuido con 3 nodos y particionamiento manual.
 
-- [ ] Revisar Proyecto2.md y README.md del proyecto
-- [ ] Crear `infra/docker-compose.postgres.yml` con 3 nodos y pgAdmin
-- [ ] Levantar contenedores y verificar conectividad
-- [ ] Crear usuario replicator y configurar permisos WAL
-- [ ] Crear `scripts/postgres/01-init-primary.sql` con tablas USERS, POSTS, COMMENTS, POST_LIKES, FOLLOWERS y distributed_transactions
-- [ ] Crear `scripts/postgres/02-distributed-transactions.sql` con procedimientos para 2PC y operaciones multi-shard
-- [ ] Verificar que la replicación esté funcionando con `SELECT * FROM pg_stat_replication;`
-- [ ] Crear `scripts/postgres/03-data-generation.sql` con funciones para usuarios, posts, comentarios y followers
-- [ ] Ejecutar funciones y verificar distribución de datos por partición
-- [ ] Crear documentación técnica de PostgreSQL en `docs/ARQUITECTURA.md`
-- [ ] Documentar el proceso de deployment paso a paso
-- [ ] BONUS: Diseñar y probar un escenario de replicación asíncrona en PostgreSQL
-- [ ] BONUS: Evaluar uso de un broker (RabbitMQ/Kafka) para desacoplar escritura y replicación
-- [ ] BONUS: Documentar trade-offs entre replicación sincrónica y asíncrona
+- [x] Revisar Proyecto2.md y README.md del proyecto
+- [x] Crear `infra/docker-compose.postgres.yml` con 3 nodos y pgAdmin
+- [x] Levantar contenedores y verificar conectividad
+- [x] Crear usuario replicator y configurar permisos WAL
+- [x] Crear `scripts/postgres/01-init-primary.sql` con tablas USERS, POSTS, COMMENTS, POST_LIKES, FOLLOWERS y distributed_transactions
+- [x] Crear `scripts/postgres/02-distributed-transactions.sql` con procedimientos para 2PC y operaciones multi-shard
+- [x] Verificar que la replicación esté funcionando con `SELECT * FROM pg_stat_replication;`
+- [x] Crear `scripts/postgres/03-data-generation.sql` con funciones para usuarios, posts, comentarios y followers
+- [x] Ejecutar funciones y verificar distribución de datos por partición
+- [x] Crear documentación técnica de PostgreSQL en `docs/ARQUITECTURA.md`
+- [x] Documentar el proceso de deployment paso a paso
+- [x] BONUS: Diseñar y probar un escenario de replicación asíncrona en PostgreSQL
+- [x] BONUS: Evaluar uso de un broker (RabbitMQ/Kafka) para desacoplar escritura y replicación
+- [x] BONUS: Documentar trade-offs entre replicación sincrónica y asíncrona
 
 ### Entregable del integrante 1
 

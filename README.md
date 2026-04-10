@@ -125,7 +125,7 @@ Este proyecto responde:
 ### Hardware Recomendado
 
 - **Máquina local:** 4 CPU cores, 8GB RAM mínimo
-- **Máquinas virtuales (3x):** t2.medium (AWS) o equivalente
+- **Máquina usada por el equipo en AWS:** t3.large
 
 ### Librerías Python
 
@@ -176,6 +176,7 @@ pip install python-dotenv
 │
 ├── experiments/
 │   ├── bonus_cqrs_demo.py                # Bonus CQRS end-to-end
+│   ├── bonus_async_replication_postgres.py # Benchmark sync vs async en PostgreSQL
 │   ├── bonus_saga_postgres.py            # Bonus SAGA en PostgreSQL
 │   └── bonus_quorum_geodistribution.ps1  # Bonus quorum/geodistribución
 │
@@ -186,7 +187,7 @@ pip install python-dotenv
 │
 ├── Proyecto2.md                          # Requerimientos originales
 ├── README.md                             # Este archivo
-└── TODO.md                               # Plan de trabajo (4 integrantes)
+└── TODO.md                               # Plan de trabajo interno
 ```
 
 ---
@@ -278,6 +279,7 @@ python experiments/bonus_saga_postgres.py
 
 # Replicación asincrónica PostgreSQL
 psql -h localhost -U admin -d social_network -f scripts/postgres/05-bonus-async-replication.sql
+python experiments/bonus_async_replication_postgres.py
 
 # Quórum y geodistribución CockroachDB (PowerShell)
 ./experiments/bonus_quorum_geodistribution.ps1
@@ -406,14 +408,7 @@ python exp6_comparison.py
 
 ## Equipo
 
-**Integrantes:** (Completar con nombres)
-
-1. **Integrante 1** - Role: [TBD]
-2. **Integrante 2** - Role: [TBD]
-3. **Integrante 3** - Role: [TBD]
-4. **Integrante 4** - Role: [TBD]
-
-Ver `TODO.md` para distribución de tareas específico.
+Trabajo desarrollado de forma colaborativa por el grupo del curso.
 
 ---
 
