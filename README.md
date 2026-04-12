@@ -373,7 +373,11 @@ python exp6_comparison.py
 
 ### Gráficos de Resultados
 
-(Se generarán con los scripts de experimentos en formato PNG/PDF)
+![Comparación de Latencia](docs/images/latency_comparison.png)
+*Comparativa de latencia en escritura, lectura y joins distribuidos.*
+
+![Escalabilidad Throughput](docs/images/throughput_scalability.png)
+*Escalabilidad de Transacciones por Segundo (TPS).*
 
 ---
 

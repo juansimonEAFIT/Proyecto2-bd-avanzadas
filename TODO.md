@@ -129,25 +129,25 @@
 
 **Objetivo:** Implementar experimentos equivalentes en CockroachDB y construir el análisis comparativo final.
 
-- [ ] Revisar los scripts de CockroachDB creados por el integrante 2
-- [ ] Instalar el driver necesario para conectar desde Python
-- [ ] Crear un archivo `.env` local con la configuración de CockroachDB
-- [ ] Crear `experiments/exp1_latency_crdb.py` para medir operaciones dentro de un range
-- [ ] Ejecutar el experimento y documentar resultados
-- [ ] Comparar los resultados con PostgreSQL
-- [ ] Crear `experiments/exp2_transactions_crdb.py` para probar transacciones ACID distribuidas nativas
-- [ ] Simular fallos durante transacciones y verificar rollback automático
-- [ ] Crear `experiments/exp3_ranges_distribution.py` para observar la distribución automática
-- [ ] Comparar el particionamiento automático con el manual de PostgreSQL
-- [ ] Crear `experiments/exp6_comparison.py` con la matriz comparativa PostgreSQL vs CockroachDB
-- [ ] Generar gráficos comparativos y exportar resultados
-- [ ] Crear `docs/CAP_PACELC_ANALYSIS.md` con el análisis teórico y práctico
-- [ ] Crear `docs/RESUMEN_EJECUTIVO.md` con hallazgos y recomendaciones
-- [ ] Actualizar `README.md` principal si hace falta
-- [ ] Preparar la presentación final del proyecto
-- [ ] BONUS: Diseñar y documentar un flujo CQRS con dos microservicios (comandos y consultas)
-- [ ] BONUS: Integrar resultados de CQRS con comparación PostgreSQL vs NewSQL
-- [ ] BONUS: Extender el análisis comparativo final incluyendo CQRS, geodistribución, quórum, SAGA y replicación asíncrona
+- [x] Revisar los scripts de CockroachDB creados por el integrante 2
+- [x] Instalar el driver necesario para conectar desde Python
+- [x] Crear un archivo `.env` local con la configuración de CockroachDB
+- [x] Crear `experiments/exp1_latency_crdb.py` para medir operaciones dentro de un range
+- [x] Ejecutar el experimento y documentar resultados
+- [x] Comparar los resultados con PostgreSQL
+- [x] Crear `experiments/exp2_transactions_crdb.py` para probar transacciones ACID distribuidas nativas
+- [x] Simular fallos durante transacciones y verificar rollback automático
+- [x] Crear `experiments/exp3_ranges_distribution.py` para observar la distribución automática
+- [x] Comparar el particionamiento automático con el manual de PostgreSQL
+- [x] Crear `experiments/exp6_comparison.py` con la matriz comparativa PostgreSQL vs CockroachDB
+- [x] Generar gráficos comparativos y exportar resultados
+- [x] Crear `docs/CAP_PACELC_ANALYSIS.md` con el análisis teórico y práctico
+- [x] Crear `docs/RESUMEN_EJECUTIVO.md` con hallazgos y recomendaciones
+- [x] Actualizar `README.md` principal si hace falta
+- [x] Preparar la presentación final del proyecto
+- [x] BONUS: Diseñar y documentar un flujo CQRS con dos microservicios (comandos y consultas)
+- [x] BONUS: Integrar resultados de CQRS con comparación PostgreSQL vs NewSQL
+- [x] BONUS: Extender el análisis comparativo final incluyendo CQRS, geodistribución, quórum, SAGA y replicación asíncrona
 
 ### Entregable del integrante 4
 
