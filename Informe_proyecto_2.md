@@ -6,7 +6,7 @@
 **Periodo:** 2026-1  
 **Universidad:** EAFIT  
 **Dominio:** Red social distribuida  
-**Integrantes:** Alejandro, Sebastian, Simon, Daniel
+**Integrantes:** Alejandro Posada, Sebastian Duran, Juan Simon Ospina, Daniel Arcila
 
 ---
 
@@ -333,4 +333,4 @@ Referencia:
 
 ---
 
-**Fecha:** 2026-04-13
+**Fecha:** 2026-04-12

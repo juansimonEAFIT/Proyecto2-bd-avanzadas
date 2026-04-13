@@ -135,7 +135,10 @@ results/
 !docs/results/*.json
 !docs/results/*.csv
 data/generated/
+data/__pycache__/
+TODO.md
 PLAN_INTEGRANTE3_POSTGRES.md
+Informe_proyecto_2.pdf
 Informe_proyecto_3.pdf
 Proyecto2.md
 
