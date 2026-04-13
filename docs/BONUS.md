@@ -44,12 +44,73 @@ Pasos:
 Archivos:
 - `scripts/cockroachdb/04-bonus-quorum-geodistribution.sql`
 - `experiments/bonus_quorum_geodistribution.ps1`
+- `infra/docker-compose.latency.yml`
 
-Pasos:
-1. Ejecutar script SQL de apoyo en CockroachDB.
-2. Ejecutar PowerShell:
+Objetivo:
+- Simular un cluster geodistribuido (3 regiones) y medir el impacto de latencia de red sobre escrituras.
+- Verificar comportamiento bajo quorum insuficiente (consistencia sobre disponibilidad).
+
+Pre-requisitos:
+1. Docker Desktop encendido.
+2. PowerShell en la raiz del proyecto.
+3. Acceso para descargar imagen `gaiaadm/pumba` (primera ejecucion).
+
+Topologia usada:
+1. node1: `region=us-east1`
+2. node2: `region=us-central1`
+3. node3: `region=eu-west1`
+
+Pasos de ejecucion:
+1. Ejecutar escenario completo (cluster + SQL + latencia + quorum):
    `./experiments/bonus_quorum_geodistribution.ps1`
-3. Validar comportamiento al reducir nodos por debajo de quorum.
+2. Opcional: ajustar intensidad de red y numero de escrituras:
+   `./experiments/bonus_quorum_geodistribution.ps1 -DelayMs 250 -DurationSeconds 120 -Writes 20`
+
+Que hace el script automaticamente:
+1. Levanta `infra/docker-compose.latency.yml`.
+2. Inicializa el cluster.
+3. Ejecuta `scripts/cockroachdb/04-bonus-quorum-geodistribution.sql`.
+4. Inyecta latencia sobre node2 y node3 con Pumba (netem delay).
+5. Mide tiempos de insercion y reporta min/avg/max.
+6. Detiene dos nodos y valida el resultado esperado de quorum insuficiente.
+7. Restaura los nodos.
+
+Validaciones recomendadas:
+1. Confirmar localities:
+   `docker exec -i cockroach-node1-latency ./cockroach sql --insecure --host=cockroach-node1-latency:26257 -e "SET allow_unsafe_internals = true; SELECT node_id, locality, is_live FROM crdb_internal.gossip_nodes ORDER BY node_id;"`
+2. Revisar datos insertados:
+   `docker exec -i cockroach-node1-latency ./cockroach sql --insecure --host=cockroach-node1-latency:26257 -e "SELECT count(*), min(created_at), max(created_at) FROM bonus_geo.geo_ping;"`
+3. Capturar evidencia de consola con:
+   - resumen de latencia (min/avg/max)
+   - error o timeout con quorum insuficiente
+
+Conclusiones esperadas:
+1. Al aumentar latencia entre regiones, sube la latencia de commit por consenso Raft.
+2. Con menos de mayoria de replicas activas, escrituras deben bloquearse o fallar para preservar consistencia.
+
+### 4.1 Resultados observados (ejecucion real)
+
+Fecha de ejecucion: 2026-04-12
+
+Configuracion usada:
+1. `DelayMs = 180`
+2. `DurationSeconds = 90`
+3. `Writes = 12`
+
+Resultado de latencia de escrituras:
+1. Promedio: 432.18 ms
+2. Minimo: 396.46 ms
+3. Maximo: 515.21 ms
+
+Resultado de quorum insuficiente:
+1. Se detuvieron `cockroach-node2-latency` y `cockroach-node3-latency`.
+2. La escritura contra `bonus_geo.geo_ping` fue rechazada.
+3. Error principal observado: `replica unavailable` / `lost quorum` (`SQLSTATE 40003`).
+
+Interpretacion:
+1. La latencia entre regiones impacta directamente el tiempo de commit por coordinacion de replicas.
+2. Con menos de mayoria de replicas disponibles, CockroachDB prioriza consistencia y rechaza escrituras.
+3. El comportamiento observado es consistente con el trade-off CAP esperado para este escenario.
 
 ## 5. Evidencia minima recomendada
 

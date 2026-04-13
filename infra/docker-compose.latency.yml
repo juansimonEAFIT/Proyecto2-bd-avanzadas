@@ -15,7 +15,7 @@ services:
     networks:
       social_network:
         ipv4_address: 10.0.0.2
-    command: start --insecure --listen-addr=0.0.0.0:26357 --http-addr=0.0.0.0:8080 --join=10.0.0.2:26357,10.0.0.3:26357,10.0.0.4:26357
+    command: start --insecure --listen-addr=0.0.0.0:26357 --advertise-addr=cockroach-node1-latency:26357 --sql-addr=0.0.0.0:26257 --http-addr=0.0.0.0:8080 --locality=region=us-east1,zone=us-east1-a --join=cockroach-node1-latency:26357,cockroach-node2-latency:26357,cockroach-node3-latency:26357
     cap_add:
       - SYS_ADMIN
       - NET_ADMIN
@@ -31,7 +31,7 @@ services:
     networks:
       social_network:
         ipv4_address: 10.0.0.3
-    command: start --insecure --listen-addr=0.0.0.0:26357 --http-addr=0.0.0.0:8080 --join=10.0.0.2:26357,10.0.0.3:26357,10.0.0.4:26357
+    command: start --insecure --listen-addr=0.0.0.0:26357 --advertise-addr=cockroach-node2-latency:26357 --sql-addr=0.0.0.0:26257 --http-addr=0.0.0.0:8080 --locality=region=us-central1,zone=us-central1-a --join=cockroach-node1-latency:26357,cockroach-node2-latency:26357,cockroach-node3-latency:26357
     depends_on:
       - cockroach-node1
     cap_add:
@@ -49,12 +49,23 @@ services:
     networks:
       social_network:
         ipv4_address: 10.0.0.4
-    command: start --insecure --listen-addr=0.0.0.0:26357 --http-addr=0.0.0.0:8080 --join=10.0.0.2:26357,10.0.0.3:26357,10.0.0.4:26357
+    command: start --insecure --listen-addr=0.0.0.0:26357 --advertise-addr=cockroach-node3-latency:26357 --sql-addr=0.0.0.0:26257 --http-addr=0.0.0.0:8080 --locality=region=eu-west1,zone=eu-west1-a --join=cockroach-node1-latency:26357,cockroach-node2-latency:26357,cockroach-node3-latency:26357
     depends_on:
       - cockroach-node1
     cap_add:
       - SYS_ADMIN
       - NET_ADMIN
+
+  cockroach-init-latency:
+    image: cockroachdb/cockroach:latest
+    container_name: cockroach-init-latency
+    networks:
+      - social_network
+    command: init --insecure --host=cockroach-node1-latency:26357
+    depends_on:
+      - cockroach-node1
+      - cockroach-node2
+      - cockroach-node3
 
 volumes:
   cockroach1_latency_data:
