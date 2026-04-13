@@ -66,9 +66,9 @@
 - [x] Ejecutar la generación de datos y verificar la distribución en ranges
 - [x] Crear documentación técnica de CockroachDB en `docs/ARQUITECTURA.md`
 - [x] Documentar el auto-sharding y el protocolo Raft
-- [ ] BONUS: Configurar y documentar escenario de geodistribución con latencia simulada
-- [ ] BONUS: Ejecutar prueba de quórum con nodos insuficientes y registrar comportamiento del cluster
-- [ ] BONUS: Documentar impacto de geodistribución y quórum en disponibilidad y consistencia
+- [x] BONUS: Configurar y documentar escenario de geodistribución con latencia simulada
+- [x] BONUS: Ejecutar prueba de quórum con nodos insuficientes y registrar comportamiento del cluster
+- [x] BONUS: Documentar impacto de geodistribución y quórum en disponibilidad y consistencia
 
 ### Entregable del integrante 2
 

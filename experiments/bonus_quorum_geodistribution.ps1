@@ -1,25 +1,105 @@
-# BONUS: Quorum + Geodistribucion en CockroachDB
-# Ejecutar desde raiz del proyecto en PowerShell
+param(
+	[int]$DelayMs = 180,
+	[int]$DurationSeconds = 90,
+	[int]$Writes = 12
+)
 
-Write-Host "Levantando cluster de latencia para bonus..."
+$ErrorActionPreference = "Stop"
+
+function Invoke-CrdbSql {
+	param(
+		[Parameter(Mandatory = $true)][string]$Sql
+	)
+
+	docker exec -i cockroach-node1-latency ./cockroach sql --insecure --host=cockroach-node1-latency:26257 -e $Sql
+}
+
+function Wait-CrdbReady {
+	param(
+		[int]$Attempts = 20,
+		[int]$DelaySeconds = 2
+	)
+
+	for ($i = 1; $i -le $Attempts; $i++) {
+		$oldLoopErrorAction = $ErrorActionPreference
+		$ErrorActionPreference = "Continue"
+		docker exec -i cockroach-node1-latency ./cockroach sql --insecure --host=cockroach-node1-latency:26257 -e "SELECT 1;" > $null 2> $null
+		$ErrorActionPreference = $oldLoopErrorAction
+		if ($LASTEXITCODE -eq 0) {
+			Write-Host "CockroachDB listo para SQL"
+			return
+		}
+
+		Write-Host "Esperando disponibilidad SQL ($i/$Attempts)..."
+		Start-Sleep -Seconds $DelaySeconds
+	}
+
+	throw "CockroachDB no quedo listo a tiempo"
+}
+
+Write-Host "[1/8] Levantando cluster de latencia"
 docker compose -f infra/docker-compose.latency.yml up -d
 
-Write-Host "Mostrando estado de nodos..."
-docker exec -it cockroach-node1-latency ./cockroach node status --insecure --host=10.0.0.2:26357
+Write-Host "[2/8] Inicializando cluster (si ya estaba inicializado, puede mostrar warning y continuar)"
+$oldErrorAction = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+docker compose -f infra/docker-compose.latency.yml up cockroach-init-latency *> $null
+$ErrorActionPreference = $oldErrorAction
 
-Write-Host "Deteniendo dos nodos para forzar falta de quorum..."
-docker stop cockroach-node2-latency
-$LASTEXITCODE | Out-Null
-docker stop cockroach-node3-latency
-$LASTEXITCODE | Out-Null
+Wait-CrdbReady
 
-Write-Host "Intentando escritura con quorum insuficiente (esperado: fallo o timeout)..."
-docker exec -it cockroach-node1-latency ./cockroach sql --insecure --host=10.0.0.2:26357 -e "CREATE DATABASE IF NOT EXISTS bonus_test;"
+Write-Host "[3/8] Estado de nodos"
+Invoke-CrdbSql "SET allow_unsafe_internals = true; SELECT node_id, locality, sql_address, is_live FROM crdb_internal.gossip_nodes ORDER BY node_id;"
 
-Write-Host "Restaurando nodos..."
-docker start cockroach-node2-latency
-$LASTEXITCODE | Out-Null
-docker start cockroach-node3-latency
-$LASTEXITCODE | Out-Null
+Write-Host "[4/8] Aplicando script SQL de bonus"
+Get-Content scripts/cockroachdb/04-bonus-quorum-geodistribution.sql -Raw |
+docker exec -i cockroach-node1-latency ./cockroach sql --insecure --host=cockroach-node1-latency:26257
 
-Write-Host "Bonus quorum/geodistribucion finalizado"
+Write-Host "[5/8] Inyectando latencia de ${DelayMs}ms por ${DurationSeconds}s en nodos remotos"
+docker pull gaiaadm/pumba:latest *> $null
+
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock gaiaadm/pumba:latest --log-level info netem --duration "${DurationSeconds}s" delay --time $DelayMs 're2:^cockroach-node(2|3)-latency$'
+
+Write-Host "[6/8] Midiendo latencia de escrituras"
+$timings = @()
+for ($i = 1; $i -le $Writes; $i++) {
+	$elapsed = (Measure-Command {
+		Invoke-CrdbSql "INSERT INTO bonus_geo.geo_ping (writer_region, payload) VALUES ('us-east1', 'write-$i');"
+	}).TotalMilliseconds
+
+	$timings += [Math]::Round($elapsed, 2)
+	Write-Host "  write-$i => ${elapsed}ms"
+}
+
+$avg = ($timings | Measure-Object -Average).Average
+$min = ($timings | Measure-Object -Minimum).Minimum
+$max = ($timings | Measure-Object -Maximum).Maximum
+
+Write-Host "Resumen latencia -> avg: $([Math]::Round($avg,2))ms | min: ${min}ms | max: ${max}ms"
+
+Write-Host "[7/8] Prueba de quorum: detener dos nodos y forzar escritura"
+docker stop cockroach-node2-latency *> $null
+docker stop cockroach-node3-latency *> $null
+
+$quorumFailed = $false
+try {
+	Invoke-CrdbSql "INSERT INTO bonus_geo.geo_ping (writer_region, payload) VALUES ('quorum-test', 'should-fail');"
+	if ($LASTEXITCODE -ne 0) {
+		throw "quorum write failed"
+	}
+} catch {
+	$quorumFailed = $true
+	Write-Host "Resultado esperado: escritura rechazada por quorum insuficiente"
+}
+
+if (-not $quorumFailed) {
+	Write-Host "Advertencia: la escritura no fallo. Revisa replicas/leaseholder del range probado."
+}
+
+Write-Host "[8/8] Restaurando nodos"
+docker start cockroach-node2-latency *> $null
+docker start cockroach-node3-latency *> $null
+Wait-CrdbReady
+Invoke-CrdbSql "SET allow_unsafe_internals = true; SELECT node_id, locality, sql_address, is_live FROM crdb_internal.gossip_nodes ORDER BY node_id;"
+
+Write-Host "Bonus geodistribucion + latencia + quorum finalizado"
