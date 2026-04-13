@@ -48,6 +48,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+__pycache__/
 
 # Translations
 *.mo
@@ -130,11 +131,19 @@ dmypy.json
 
 # Project specific
 results/
-*.json
-*.csv
-*.png
-*.pdf
+!docs/results/
+!docs/results/*.json
+!docs/results/*.csv
 data/generated/
+data/__pycache__/
+TODO.md
+PLAN_INTEGRANTE3_POSTGRES.md
+Informe_proyecto_2.pdf
+Informe_proyecto_3.pdf
+Proyecto2.md
+
+# Local secrets
+*.pem
 
 # Docker
 .dockerignore

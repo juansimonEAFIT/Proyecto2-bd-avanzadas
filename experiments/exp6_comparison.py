@@ -72,7 +72,7 @@ def print_comparison_matrix():
 
 def create_latency_comparison_chart(output_dir):
     """Genera un gráfico de barras comparando latencias."""
-    labels = ['Latencia Escritura (ms)', 'Latencia Lectura (ms)', 'Latencia Join Inter-shard (ms)']
+    labels = ['Latencia Escritura (ms)', 'Latencia Lectura (ms)', 'Join / Agregado (ms)']
     pg_latency = latest_available_result([
         "exp1_latency_intra_shard.json",
     ]) or {}
@@ -81,9 +81,9 @@ def create_latency_comparison_chart(output_dir):
     ]) or {}
 
     pg_means = [
-        pg_latency.get("write_mean_ms", 10),
-        pg_latency.get("read_mean_ms", 5),
-        pg_latency.get("join_mean_ms", 300),
+        pg_latency.get("write_primary", {}).get("mean", pg_latency.get("write_mean_ms", 10)),
+        pg_latency.get("read_primary", {}).get("mean", pg_latency.get("read_mean_ms", 5)),
+        pg_latency.get("secondary_join_metric", {}).get("mean", pg_latency.get("join_mean_ms", 300)),
     ]
     crdb_means = [
         crdb_latency.get("write_mean_ms", 20),

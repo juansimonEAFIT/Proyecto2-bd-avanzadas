@@ -4,12 +4,12 @@
       "labels": [
         "Latencia Escritura (ms)",
         "Latencia Lectura (ms)",
-        "Latencia Join Inter-shard (ms)"
+        "Join / Agregado (ms)"
       ],
       "pg_means": [
-        3.834,
-        1.653,
-        1.953
+        235.0066,
+        234.7786,
+        234.9095
       ],
       "crdb_means": [
         8.788,
