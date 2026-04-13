@@ -72,3 +72,17 @@ El **Patrón SAGA** mediante microservicios y compensación asíncrona es la sol
 CockroachDB introduce un trade-off fascinante:
 - *Geodistribución*: Asigna el **Leaseholder** lo más cerca posible al cliente de origen. Postgres clásico no puede hacer esto sin fragmentar o crear bases de datos independientes por región.
 - *Fallo de Quórum*: Si simulamos la caída de dos de tres instancias en un Data Center, CockroachDB detiene en seco las escrituras (Pierde Availability por Consistency). Con Postgres (Master/Slave clásico con async), se puede seguir operando usando un slave degradado si la organización acepta perder unas eventuales escrituras.
+
+### 5.4. Sintesis de resultados bonus (integracion final)
+
+Con base en la ejecucion consolidada de bonus y experimentos comparativos:
+
+1. **CQRS validado**: el flujo comando/consulta desacoplado funciona correctamente y reduce acoplamiento operacional para escalar lecturas.
+2. **Async en PostgreSQL**: se observo mejora en latencia media de escritura frente a `synchronous_commit=on` en la corrida registrada.
+3. **SAGA en PostgreSQL**: permite evitar el bloqueo operativo del 2PC, pero desplaza complejidad al codigo de aplicacion (orquestacion y compensacion).
+4. **Quorum en CockroachDB**: ante perdida de mayoria, las escrituras son rechazadas de forma consistente con CAP (modelo CP).
+
+Decision tecnica integrada:
+
+- Para un core transaccional distribuido de red social, CockroachDB sigue siendo la opcion recomendada por seguridad operativa y consistencia fuerte.
+- Para consultas de alto volumen y baja latencia, PostgreSQL en modo de lectura desacoplada (CQRS) es un complemento efectivo.

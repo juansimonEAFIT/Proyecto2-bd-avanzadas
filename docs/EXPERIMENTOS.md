@@ -134,7 +134,7 @@ Sirve para demostrar:
 
 ## 6. Lo que sigue pendiente
 
-Para cerrar el proyecto todavia faltan experimentos obligatorios que hoy no estan implementados en `experiments/`:
+Para cerrar el proyecto todavia faltan experimentos obligatorios de PostgreSQL y consolidacion final:
 
 - latencia intra-shard
 - lectura inter-shard
@@ -142,3 +142,90 @@ Para cerrar el proyecto todavia faltan experimentos obligatorios que hoy no esta
 - failover y recuperacion
 - comparacion PostgreSQL vs CockroachDB
 - consolidacion de resultados y reporte final
+
+## 7. CockroachDB - Exp1 ejecutado (integrante 4)
+
+Script ejecutado:
+
+```bash
+python experiments/exp1_latency_crdb.py
+```
+
+Resultado observado (2026-04-12):
+
+- escritura media: `10.31 ms`
+- escritura mediana: `9.83 ms`
+- escritura p95: `13.94 ms`
+- lectura media: `4.18 ms`
+- lectura mediana: `4.04 ms`
+- lectura p95: `6.01 ms`
+
+Interpretacion rapida:
+
+- CockroachDB mantiene latencias estables en operaciones base.
+- La lectura por PK fue mas rapida que la escritura, como se esperaba por el costo de consenso en escrituras.
+
+## 8. CockroachDB - Exp2 ejecutado (transacciones ACID + rollback)
+
+Script ejecutado:
+
+```bash
+python experiments/exp2_transactions_crdb.py
+```
+
+Resultado observado (2026-04-12):
+
+1. Caso de exito:
+	- insercion en `followers` aplicada
+	- contadores `follower_count` y `following_count` actualizados
+	- commit completado
+2. Caso con error simulado:
+	- se provoca excepcion antes de commit
+	- rollback automatico ejecutado por el context manager
+	- estado final de usuarios sin cambios respecto al caso de exito
+
+Interpretacion rapida:
+
+- El experimento confirma atomicidad en transacciones distribuidas de CockroachDB.
+- Si ocurre error en mitad del flujo, los cambios parciales no quedan persistidos.
+
+## 9. CockroachDB - Exp3 ejecutado (distribucion de rangos)
+
+Script ejecutado:
+
+```bash
+python experiments/exp3_ranges_distribution.py
+```
+
+Resultado observado (2026-04-12):
+
+- `users`: 1 range
+- `posts`: 1 range
+- `comments`: 1 range
+- `followers`: 1 range
+
+Comparacion con PostgreSQL manual:
+
+1. PostgreSQL usa particiones declaradas de forma explicita (`users_p1`, `users_p2`, `users_p3`, etc.) y requiere diseño/operacion manual.
+2. CockroachDB no exige definir shards por tabla para empezar: administra rangos automaticamente y escala su cantidad segun crecimiento/carga.
+3. En este dataset inicial, cada tabla aun cabe en un solo range; el mecanismo de auto-sharding existe, pero no se disparo una division adicional por tamaño.
+
+## 10. CockroachDB - Exp6 ejecutado (comparacion final y graficos)
+
+Script ejecutado:
+
+```bash
+python experiments/exp6_comparison.py
+```
+
+Artefactos generados:
+
+- `docs/images/latency_comparison.png`
+- `docs/images/throughput_scalability.png`
+- `docs/results/exp6_comparison.json`
+
+Resultado:
+
+1. La matriz comparativa final fue generada en consola sin errores.
+2. Los graficos de latencia y throughput se exportaron correctamente.
+3. El resumen estructurado de comparacion quedo persistido para usarlo en informe/presentacion.

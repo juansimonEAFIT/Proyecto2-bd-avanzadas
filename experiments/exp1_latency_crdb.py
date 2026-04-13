@@ -7,12 +7,24 @@ Mide el rendimiento base de CockroachDB para operaciones simples.
 import os
 import sys
 import time
+import json
+from pathlib import Path
 from dotenv import load_dotenv
 
 # Añadir el directorio raíz al path para importar de data/
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from data.db_helpers import PostgreSQLConnection, PerformanceTester
+
+ROOT = Path(__file__).resolve().parents[1]
+RESULTS_DIR = ROOT / "docs" / "results"
+RESULT_PATH = RESULTS_DIR / "exp1_latency_crdb.json"
+
+
+def save_results(payload: dict) -> None:
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    with RESULT_PATH.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2, ensure_ascii=False)
 
 def main():
     # Cargar variables de entorno
@@ -46,10 +58,6 @@ def main():
         
         # 1. Medir Latencia de Escritura (INSERT)
         print("\n[1] Midiendo latencia de INSERT en tabla 'users'...")
-        # Añadimos time_ns y un sufijo aleatorio corto para garantizar IDs únicos incluso en bucles de milisegundos
-        import random
-        base_id = int(time.time() * 1000) 
-        
         insert_stats = tester.measure_insert_latency('users', lambda count: {
             'user_id': int(time.time_ns()) + count,
             'username': f"latency_test_{int(time.time_ns())}_{count}",
@@ -66,6 +74,7 @@ def main():
         print("\n[2] Midiendo latencia de SELECT por Primary Key...")
         # Primero obtenemos un user_id válido
         sample_user = crdb.execute_query("SELECT user_id FROM users LIMIT 1")
+        select_stats = {}
         if sample_user:
             uid = sample_user[0]['user_id']
             query = f"SELECT * FROM users WHERE user_id = {uid}"
@@ -77,6 +86,27 @@ def main():
             
         else:
             print("    [!] Error: No hay datos en la tabla 'users' para realizar la prueba de lectura.")
+
+        join_stats = tester.measure_join_latency(
+            "SELECT u.user_id, u.username, COUNT(p.post_id) FROM users u LEFT JOIN posts p ON p.user_id = u.user_id GROUP BY u.user_id, u.username LIMIT 1;",
+            iterations=max(20, iterations // 5),
+        )
+
+        payload = {
+            "iterations": iterations,
+            "write_mean_ms": round(float(insert_stats.get("mean", 0.0)), 3),
+            "write_median_ms": round(float(insert_stats.get("median", 0.0)), 3),
+            "write_p95_ms": round(float(insert_stats.get("p95", 0.0)), 3),
+            "read_mean_ms": round(float(select_stats.get("mean", 0.0)), 3),
+            "read_median_ms": round(float(select_stats.get("median", 0.0)), 3),
+            "read_p95_ms": round(float(select_stats.get("p95", 0.0)), 3),
+            "join_mean_ms": round(float(join_stats.get("mean", 0.0)), 3),
+            "join_median_ms": round(float(join_stats.get("median", 0.0)), 3),
+            "join_p95_ms": round(float(join_stats.get("p95", 0.0)), 3),
+        }
+        save_results(payload)
+        print(f"[+] Resultados guardados en {RESULT_PATH}")
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
             
         print("\n" + "=" * 60)
         print("RESULTADO: CockroachDB muestra latencias estables gracias a su")

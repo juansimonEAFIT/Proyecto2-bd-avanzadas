@@ -291,48 +291,54 @@ Detalles completos en `docs/BONUS.md`.
 
 ## Ejecución de Experimentos
 
-### Experimento 1: Latencia de Escritura Intra-Shard
+### CockroachDB - Experimento 1: Latencia Base
 
 ```bash
 cd experiments
-python exp1_latency_intra_shard.py
+python exp1_latency_crdb.py
 
-# Resultado esperado:
-# - Latencia <10ms para writes en PostgreSQL (sin replicación sincrónica)
-# - Latencia similar en CockroachDB
+# Resultado observado (2026-04-12):
+# - Write mean: 10.31 ms
+# - Read mean: 4.18 ms
 ```
 
-### Experimento 2: Latencia de Lectura Inter-Shard
+### CockroachDB - Experimento 2: Transacciones Distribuidas ACID
 
 ```bash
-python exp2_latency_inter_shard.py
+python exp2_transactions_crdb.py
 
 # Resultado esperado:
-# - Latencia mayor en PostgreSQL (materialización de resultados entre shards)
-# - Latencia similar en CockroachDB (gracias a su arquitectura distribuida nativa)
+# - Caso exitoso con COMMIT
+# - Caso con error simulado y ROLLBACK automático
 ```
 
-### Experimento 3: Replicación Sincrónica vs Asincrónica
+### CockroachDB - Experimento 3: Distribución de Rangos
+
+```bash
+python exp3_ranges_distribution.py
+
+# Resultado esperado:
+# - Conteo de ranges por tabla
+# - Evidencia de auto-sharding administrado por el motor
+```
+
+### PostgreSQL - Experimento 3: Replicación Sync vs Async
 
 ```bash
 python exp3_replication_sync.py
 
 # Resultado esperado:
-# - Latencia significativamente mayor con synchronous_commit=ON
+# - Latencia mayor con synchronous_commit=ON
 # - Trade-off entre consistencia y performance
 ```
 
-### Experimento 4: Transacciones Distribuidas (2PC)
+### PostgreSQL - Experimento 4: Transacciones Distribuidas (2PC)
 
 ```bash
 python exp4_distributed_transactions.py
-
-# Resultado esperado:
-# - Overhead significativo por coordinación entre nodos
-# - Risk de bloqueo si no se completa el commit
 ```
 
-### Experimento 5: Failover y Recuperación
+### PostgreSQL - Experimento 5: Failover y Recuperación
 
 ```bash
 python exp5_failover_recovery.py
@@ -349,11 +355,10 @@ python exp5_failover_recovery.py
 ```bash
 python exp6_comparison.py
 
-# Genera tabla comparativa con métricas de:
-# - Latencia de escritura/lectura
-# - Escalabilidad
-# - Tolerancia a fallos
-# - Complejidad de configuración
+# Exporta:
+# - docs/images/latency_comparison.png
+# - docs/images/throughput_scalability.png
+# - docs/results/exp6_comparison.json
 ```
 
 ---
@@ -378,6 +383,12 @@ python exp6_comparison.py
 
 ![Escalabilidad Throughput](docs/images/throughput_scalability.png)
 *Escalabilidad de Transacciones por Segundo (TPS).*
+
+### Artefactos de Resultados
+
+- `docs/results/exp6_comparison.json`
+- `docs/EXPERIMENTOS.md` (registro de ejecuciones y observaciones)
+- `docs/PRESENTACION_FINAL.md` (guion final de presentacion)
 
 ---
 

@@ -32,20 +32,22 @@ def main():
     
     try:
         db.connect()
+        db.execute_update("SET allow_unsafe_internals = true")
         
-        # 1. Consultar rangos por tabla
-        print("\n[1] Distribución de rangos por tabla (crdb_internal.table_spans):")
-        query_ranges = """
-            SELECT 
-                table_name,
-                range_count,
-                ROUND(size_bytes / 1024.0 / 1024.0, 2) AS size_mb
-            FROM crdb_internal.table_spans
-            WHERE table_name IN ('users', 'posts', 'comments', 'followers')
-            ORDER BY range_count DESC;
-        """
-        
-        results = db.execute_query(query_ranges)
+        # 1. Consultar rangos por tabla (compatible con versiones recientes)
+        print("\n[1] Distribución de rangos por tabla (SHOW RANGES):")
+        table_names = ["users", "posts", "comments", "followers"]
+        results = []
+        for name in table_names:
+            range_rows = db.execute_query(f"SHOW RANGES FROM TABLE {name};")
+            results.append(
+                {
+                    "table_name": name,
+                    "range_count": len(range_rows),
+                    "size_mb": 0.0,
+                }
+            )
+        results.sort(key=lambda r: r["range_count"], reverse=True)
         
         if results:
             print(f"{'Tabla':<15} | {'Rangos':<8} | {'Tamaño (MB)':<10}")

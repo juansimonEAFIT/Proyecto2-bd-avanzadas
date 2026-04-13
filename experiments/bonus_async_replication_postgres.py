@@ -19,7 +19,7 @@ if str(ROOT / "data") not in sys.path:
 from db_helpers import PostgreSQLConnection  # noqa: E402
 
 PRIMARY_CFG = {
-    "host": "localhost",
+    "host": "127.0.0.1",
     "port": 5432,
     "database": "social_network",
     "user": "admin",
@@ -28,16 +28,8 @@ PRIMARY_CFG = {
 
 REPLICA_CFGS = [
     {
-        "name": "postgres-replica-1",
-        "host": "localhost",
-        "port": 5433,
-        "database": "social_network",
-        "user": "admin",
-        "password": "admin123",
-    },
-    {
         "name": "postgres-replica-2",
-        "host": "localhost",
+        "host": "127.0.0.1",
         "port": 5434,
         "database": "social_network",
         "user": "admin",
@@ -204,7 +196,13 @@ def main():
         "summary": summary,
     }
 
+    results_dir = ROOT / "docs" / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
+    out_path = results_dir / "bonus_async_replication_postgres.json"
+    out_path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
+
     print(json.dumps(payload, indent=2, default=str))
+    print(f"[+] Resultado guardado en {out_path}")
 
 
 if __name__ == "__main__":

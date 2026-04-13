@@ -44,10 +44,10 @@ Evidencia validada:
 - las filas quedan visibles en primary y replicas
 
 Ultima corrida registrada:
-- fecha: `2026-04-09`
-- sync: `9.373 ms`
-- async: `8.342 ms`
-- mejora async observada: `11.0%`
+- fecha: `2026-04-13`
+- sync por insercion: `0.0289 ms`
+- async por insercion: `0.0305 ms`
+- variacion async observada: `-5.45%` (en esta corrida, async fue ligeramente mas lenta)
 
 ## 3. SAGA sobre PostgreSQL
 
@@ -112,7 +112,7 @@ Conclusiones esperadas:
 
 ### 4.1 Resultados observados (ejecucion real)
 
-Fecha de ejecucion: 2026-04-12
+Fecha de ejecucion: 2026-04-13
 
 Configuracion usada:
 1. `DelayMs = 180`
@@ -120,9 +120,9 @@ Configuracion usada:
 3. `Writes = 12`
 
 Resultado de latencia de escrituras:
-1. Promedio: 432.18 ms
-2. Minimo: 396.46 ms
-3. Maximo: 515.21 ms
+1. Promedio: 480.00 ms
+2. Minimo: 420.81 ms
+3. Maximo: 602.16 ms
 
 Resultado de quorum insuficiente:
 1. Se detuvieron `cockroach-node2-latency` y `cockroach-node3-latency`.
@@ -141,3 +141,22 @@ Interpretacion:
 - Registro de SAGA completada y compensada.
 - Resultado de CQRS mostrando proyeccion del evento.
 - Conclusiones de disponibilidad vs consistencia en quorum.
+
+## 6. Integracion final con la comparacion PostgreSQL vs NewSQL
+
+Resumen integrado (2026-04-13):
+1. **CQRS**: validado con dos bases desacopladas (comando/consulta) y proyeccion de eventos operativa.
+2. **Replicacion asincronica**: en esta corrida puntual, el modo async no mejoro la latencia media frente a sync (`-5.45%`).
+3. **SAGA**: ruta de compensacion disponible para evitar bloqueos prolongados en flujos distribuidos de PostgreSQL.
+4. **Geodistribucion y quorum**: CockroachDB mantuvo el comportamiento CP esperado; con perdida de mayoria se rechazaron escrituras (`SQLSTATE 40003`).
+
+Artefactos de evidencia ejecutada:
+1. `docs/results/bonus_cqrs_demo.json`
+2. `docs/results/bonus_async_replication_postgres.json`
+3. `docs/results/bonus_saga_postgres.json`
+4. `docs/results/bonus_quorum_geodistribution.json`
+
+Lectura arquitectonica consolidada:
+1. CockroachDB es mas fuerte en consistencia distribuida y tolerancia a fallos por diseno.
+2. PostgreSQL mantiene ventaja en latencia local y flexibilidad, con costo de orquestacion mayor.
+3. Un enfoque hibrido CQRS (CockroachDB para comandos criticos + PostgreSQL para lecturas masivas) ofrece el mejor balance para la red social del proyecto.

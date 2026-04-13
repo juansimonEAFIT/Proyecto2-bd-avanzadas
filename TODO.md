@@ -94,7 +94,7 @@
 - [ ] Instalar dependencias Python necesarias para las pruebas
 - [ ] Crear un archivo `.env` local con las configuraciones de PostgreSQL
 - [ ] Crear `experiments/exp1_latency_intra_shard.py` para medir operaciones sobre un solo shard
-- [ ] Ejecutar el experimento y documentar resultados
+- [x] Ejecutar el experimento y documentar resultados
 - [ ] Comparar latencias entre primary y réplicas
 - [ ] Crear `experiments/exp3_replication_sync.py` para comparar `synchronous_commit=ON` y `OFF`
 - [ ] Analizar el impacto de la sincronización en performance
@@ -131,7 +131,6 @@
 
 - [x] Revisar los scripts de CockroachDB creados por el integrante 2
 - [x] Instalar el driver necesario para conectar desde Python
-- [x] Crear un archivo `.env` local con la configuración de CockroachDB
 - [x] Crear `experiments/exp1_latency_crdb.py` para medir operaciones dentro de un range
 - [x] Ejecutar el experimento y documentar resultados
 - [x] Comparar los resultados con PostgreSQL

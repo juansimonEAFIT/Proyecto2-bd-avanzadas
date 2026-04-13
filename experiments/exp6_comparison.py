@@ -6,6 +6,9 @@ Genera gráficos de latencia y desempeño utilizando matplotlib.
 """
 
 import os
+import json
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -13,6 +16,27 @@ import seaborn as sns
 # Configuración de estilo
 plt.style.use('ggplot')
 sns.set_theme(style="whitegrid", palette="muted")
+
+ROOT = Path(__file__).resolve().parents[1]
+RESULTS_DIR = ROOT / "docs" / "results"
+IMAGES_DIR = ROOT / "docs" / "images"
+SUMMARY_PATH = RESULTS_DIR / "exp6_comparison.json"
+
+
+def load_json_result(filename: str):
+    path = RESULTS_DIR / filename
+    if not path.exists():
+        return None
+    with path.open("r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def latest_available_result(file_names):
+    for file_name in file_names:
+        data = load_json_result(file_name)
+        if data:
+            return data
+    return None
 
 def print_comparison_matrix():
     matrix = [
@@ -49,8 +73,23 @@ def print_comparison_matrix():
 def create_latency_comparison_chart(output_dir):
     """Genera un gráfico de barras comparando latencias."""
     labels = ['Latencia Escritura (ms)', 'Latencia Lectura (ms)', 'Latencia Join Inter-shard (ms)']
-    pg_means = [10, 5, 300]
-    crdb_means = [20, 15, 120]
+    pg_latency = latest_available_result([
+        "exp1_latency_intra_shard.json",
+    ]) or {}
+    crdb_latency = latest_available_result([
+        "exp1_latency_crdb.json",
+    ]) or {}
+
+    pg_means = [
+        pg_latency.get("write_mean_ms", 10),
+        pg_latency.get("read_mean_ms", 5),
+        pg_latency.get("join_mean_ms", 300),
+    ]
+    crdb_means = [
+        crdb_latency.get("write_mean_ms", 20),
+        crdb_latency.get("read_mean_ms", 15),
+        crdb_latency.get("join_mean_ms", 120),
+    ]
     
     x = np.arange(len(labels))
     width = 0.35
@@ -83,11 +122,22 @@ def create_latency_comparison_chart(output_dir):
     plt.savefig(os.path.join(output_dir, 'latency_comparison.png'))
     plt.close()
 
+    return {
+        "labels": labels,
+        "pg_means": pg_means,
+        "crdb_means": crdb_means,
+        "pg_source": "exp1_latency_intra_shard.json",
+        "crdb_source": "exp1_latency_crdb.json",
+    }
+
 def create_throughput_chart(output_dir):
     """Genera un gráfico de línea simulando escalabilidad de Throughput (TPS)."""
     nodos = [1, 3, 5, 9]
-    pg_tps = [5000, 12000, 15000, 16000] # Rendimiento decae por cuellos de botella de shard routing y locks
-    crdb_tps = [2500, 7000, 11500, 20500] # Rendimiento escala de forma casi lineal
+    comparison = latest_available_result([
+        "exp6_comparison.json",
+    ]) or {}
+    pg_tps = comparison.get("pg_tps", [5000, 12000, 15000, 16000])
+    crdb_tps = comparison.get("crdb_tps", [2500, 7000, 11500, 20500])
     
     plt.figure(figsize=(10, 6))
     plt.plot(nodos, pg_tps, marker='o', label='PostgreSQL (Manual Sharding)', color='#336791', linewidth=2)
@@ -102,22 +152,39 @@ def create_throughput_chart(output_dir):
     plt.savefig(os.path.join(output_dir, 'throughput_scalability.png'))
     plt.close()
 
+    return {
+        "nodes": nodos,
+        "pg_tps": pg_tps,
+        "crdb_tps": crdb_tps,
+    }
+
 def main():
     print("ANALIZANDO RESULTADOS DE EXPERIMENTOS...")
     
     # Asegurar que el directorio de resultados existe
-    output_dir = os.path.join(os.path.dirname(__file__), '..', 'docs', 'images')
-    os.makedirs(output_dir, exist_ok=True)
+    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     
     # 1. Generar gráficos
-    print(f"\n[+] Generando reportes gráficos en {os.path.abspath(output_dir)}:")
-    create_latency_comparison_chart(output_dir)
+    print(f"\n[+] Generando reportes gráficos en {IMAGES_DIR}:")
+    latency_payload = create_latency_comparison_chart(IMAGES_DIR)
     print("    - latency_comparison.png generado.")
-    create_throughput_chart(output_dir)
+    throughput_payload = create_throughput_chart(IMAGES_DIR)
     print("    - throughput_scalability.png generado.")
     
     # 2. Imprimir Matriz
     print_comparison_matrix()
+
+    summary = {
+        "generated_from": {
+            "latency": latency_payload,
+            "throughput": throughput_payload,
+        }
+    }
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    with SUMMARY_PATH.open("w", encoding="utf-8") as handle:
+        json.dump(summary, handle, indent=2, ensure_ascii=False)
+    print(f"[+] Resumen guardado en {SUMMARY_PATH}")
     
     # 3. Conclusión Final
     print("\n[!] CONCLUSIÓN DEL ANÁLISIS:")

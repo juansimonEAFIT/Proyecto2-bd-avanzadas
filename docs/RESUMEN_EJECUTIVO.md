@@ -26,6 +26,14 @@ Para el desarrollo de la Red Social:
 - **CockroachDB** es la plataforma ideal en la capa transaccional principal, gracias a su escalabilidad lineal, geodistribución y redundancia automática (tolerancia a fallos por quórum). El pequeño "gap" en latencia se compensa con la reducción drástica en costos de mantenimiento (DevOps).
 - **Adicionalmente**, se sugiere adoptar un modelo **CQRS** de cara al futuro de la red social, donde CockroachDB sirva como "Write Model" y se proyecten vistas a PostgreSQL (o un ElasticSearch) para servir el "Read Model" masivo reduciendo latencias a nivel de 1-2 milisegundos.
 
+## Estado de Cierre del Entregable (Integrante 4)
+
+Estado al 2026-04-12:
+1. Experimentos de CockroachDB ejecutados y documentados (Exp1, Exp2, Exp3, Exp6).
+2. Matriz comparativa y graficos exportados en `docs/images/` y `docs/results/`.
+3. Bonus integrados en el analisis final: CQRS, geodistribucion/quorum, SAGA y replicacion asincronica.
+4. Recomendacion consolidada: arquitectura hibrida CQRS con CockroachDB para comandos criticos y PostgreSQL para lecturas masivas.
+
 ## Créditos
 - **Integrantes**: Alejandro, Sebastian, Simon, Daniel.
 - **Curso**: SI3009 Bases de Datos Avanzadas, 2026-1.
