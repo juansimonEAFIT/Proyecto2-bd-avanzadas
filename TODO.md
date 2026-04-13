@@ -146,7 +146,7 @@
 - [x] Preparar la presentación final del proyecto
 - [x] BONUS: Diseñar y documentar un flujo CQRS con dos microservicios (comandos y consultas)
 - [x] BONUS: Integrar resultados de CQRS con comparación PostgreSQL vs NewSQL
-- [x] BONUS: Extender el análisis comparativo final incluyendo CQRS, geodistribución, quórum, SAGA y replicación asíncrona
+- [x] BONUS: Extender el análisis comparativo final incluyendo CQRS, geodistribución, quórum, SAGA y replicación asíncronaa
 
 ### Entregable del integrante 4
 

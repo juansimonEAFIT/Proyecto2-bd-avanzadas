@@ -1,0 +1,83 @@
+{
+  "benchmark_prefix": "bonus_async_8936f682",
+  "iterations": 200,
+  "sync_on": {
+    "commit_mode": "on",
+    "iterations": 200,
+    "inserted_rows": 200,
+    "elapsed_ms": 5.778,
+    "rows_visible_primary": 200,
+    "benchmark_prefix": "bonus_async_8936f682",
+    "rows_visible_replicas": [
+      {
+        "replica": "postgres-replica-2",
+        "visible_rows": 200,
+        "is_replica": true,
+        "replay_delay": "0:00:00.030373"
+      }
+    ],
+    "replication_status": [
+      {
+        "application_name": "postgres-replica-1",
+        "client_addr": "10.0.0.5",
+        "state": "streaming",
+        "sync_state": "sync",
+        "write_lag": "0:00:00.000468",
+        "flush_lag": "0:00:00.002066",
+        "replay_lag": "0:00:00.002685"
+      },
+      {
+        "application_name": "postgres-replica-2",
+        "client_addr": "10.0.0.6",
+        "state": "streaming",
+        "sync_state": "potential",
+        "write_lag": "0:00:00.000447",
+        "flush_lag": "0:00:00.001493",
+        "replay_lag": "0:00:00.002090"
+      }
+    ],
+    "cluster_sync_setting": "FIRST 1 (\"postgres-replica-1\", \"postgres-replica-2\")"
+  },
+  "sync_off": {
+    "commit_mode": "off",
+    "iterations": 200,
+    "inserted_rows": 200,
+    "elapsed_ms": 6.093,
+    "rows_visible_primary": 200,
+    "benchmark_prefix": "bonus_async_8936f682",
+    "rows_visible_replicas": [
+      {
+        "replica": "postgres-replica-2",
+        "visible_rows": 200,
+        "is_replica": true,
+        "replay_delay": "0:00:01.031164"
+      }
+    ],
+    "replication_status": [
+      {
+        "application_name": "postgres-replica-1",
+        "client_addr": "10.0.0.5",
+        "state": "streaming",
+        "sync_state": "async",
+        "write_lag": "0:00:00.000449",
+        "flush_lag": "0:00:00.000449",
+        "replay_lag": "0:00:00.000449"
+      },
+      {
+        "application_name": "postgres-replica-2",
+        "client_addr": "10.0.0.6",
+        "state": "streaming",
+        "sync_state": "async",
+        "write_lag": "0:00:00.000445",
+        "flush_lag": "0:00:00.000445",
+        "replay_lag": "0:00:00.000445"
+      }
+    ],
+    "cluster_sync_setting": ""
+  },
+  "summary": {
+    "sync_per_insert_ms": 0.0289,
+    "async_per_insert_ms": 0.0305,
+    "async_improvement_pct": -5.45
+  }
+}

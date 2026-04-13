@@ -1,0 +1,26 @@
+﻿{
+    "executed_at_utc":  "2026-04-13T03:23:37.5710849Z",
+    "delay_ms":  180,
+    "duration_seconds":  90,
+    "writes":  12,
+    "latency_ms":  {
+                       "average":  480,
+                       "minimum":  420.81,
+                       "maximum":  602.16,
+                       "raw":  [
+                                   602.16,
+                                   523.48,
+                                   460.79,
+                                   496.13,
+                                   519.13,
+                                   496.52,
+                                   437.81,
+                                   435.7,
+                                   450.19,
+                                   496.05,
+                                   420.81,
+                                   421.22
+                               ]
+                   },
+    "quorum_write_rejected":  true
+}

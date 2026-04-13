@@ -1,0 +1,26 @@
+{
+  "iterations": 100,
+  "write_mean_ms": 3.834,
+  "write_median_ms": 3.584,
+  "write_p95_ms": 5.668,
+  "read_mean_ms": 1.653,
+  "read_median_ms": 1.999,
+  "read_p95_ms": 2.512,
+  "join_mean_ms": 1.953,
+  "join_median_ms": 2.002,
+  "join_p95_ms": 3.286,
+  "sample_partitions": [
+    {
+      "user_id": 1,
+      "partition_name": "users_p3"
+    },
+    {
+      "user_id": 2,
+      "partition_name": "users_p1"
+    },
+    {
+      "user_id": 3,
+      "partition_name": "users_p2"
+    }
+  ]
+}
