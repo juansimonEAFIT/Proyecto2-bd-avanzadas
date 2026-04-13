@@ -438,6 +438,12 @@ Administrar un sistema distribuido no es solo un problema técnico; también es 
 - `docs/PRESENTACION_FINAL.md` deja listo el guion de exposición
 - `docs/results/` contiene resultados persistidos
 - `docs/images/` contiene gráficas y evidencias visuales
+Trabajo desarrollado de forma colaborativa por el grupo del curso:
+- Juan simón Ospina
+- Sebastian Duran
+- Alejandro Posada
+- Daniel Arcila
+
 
 ---
 
