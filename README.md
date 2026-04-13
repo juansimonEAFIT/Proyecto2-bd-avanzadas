@@ -423,7 +423,12 @@ python exp6_comparison.py
 
 ## Equipo
 
-Trabajo desarrollado de forma colaborativa por el grupo del curso.
+Trabajo desarrollado de forma colaborativa por el grupo del curso:
+- Juan simón Ospina
+- Sebastian Duran
+- Alejandro Posada
+- Daniel Arcila
+
 
 ---
 
