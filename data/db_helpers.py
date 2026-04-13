@@ -80,21 +80,24 @@ class PerformanceTester:
     def __init__(self, db_conn: PostgreSQLConnection):
         self.db = db_conn
 
-    def measure_insert_latency(self, table: str, values: Dict, iterations: int = 100) -> Dict:
+    def measure_insert_latency(self, table: str, values, iterations: int = 100) -> Dict:
         """Mide la latencia de inserciones"""
         latencies = []
         
         for i in range(iterations):
             start = time.time()
             
+            # Generar datos en cada iteración si se pasó un generador (lambda)
+            current_values = values(i) if callable(values) else values
+            
             # Preparar query
-            columns = list(values.keys())
+            columns = list(current_values.keys())
             placeholders = ', '.join(['%s'] * len(columns))
             query = f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({placeholders})"
             
             # Ejecutar
             try:
-                self.db.execute_update(query, tuple(values.values()))
+                self.db.execute_update(query, tuple(current_values.values()))
                 latency = (time.time() - start) * 1000  # Convert to ms
                 latencies.append(latency)
             except Exception as e:

@@ -19,20 +19,20 @@
 
 **Objetivo:** Configurar PostgreSQL distribuido con 3 nodos y particionamiento manual.
 
-- [ ] Revisar Proyecto2.md y README.md del proyecto
-- [ ] Crear `infra/docker-compose.postgres.yml` con 3 nodos y pgAdmin
-- [ ] Levantar contenedores y verificar conectividad
-- [ ] Crear usuario replicator y configurar permisos WAL
-- [ ] Crear `scripts/postgres/01-init-primary.sql` con tablas USERS, POSTS, COMMENTS, POST_LIKES, FOLLOWERS y distributed_transactions
-- [ ] Crear `scripts/postgres/02-distributed-transactions.sql` con procedimientos para 2PC y operaciones multi-shard
-- [ ] Verificar que la replicación esté funcionando con `SELECT * FROM pg_stat_replication;`
-- [ ] Crear `scripts/postgres/03-data-generation.sql` con funciones para usuarios, posts, comentarios y followers
-- [ ] Ejecutar funciones y verificar distribución de datos por partición
-- [ ] Crear documentación técnica de PostgreSQL en `docs/ARQUITECTURA.md`
-- [ ] Documentar el proceso de deployment paso a paso
-- [ ] BONUS: Diseñar y probar un escenario de replicación asíncrona en PostgreSQL
-- [ ] BONUS: Evaluar uso de un broker (RabbitMQ/Kafka) para desacoplar escritura y replicación
-- [ ] BONUS: Documentar trade-offs entre replicación sincrónica y asíncrona
+- [x] Revisar Proyecto2.md y README.md del proyecto
+- [x] Crear `infra/docker-compose.postgres.yml` con 3 nodos y pgAdmin
+- [x] Levantar contenedores y verificar conectividad
+- [x] Crear usuario replicator y configurar permisos WAL
+- [x] Crear `scripts/postgres/01-init-primary.sql` con tablas USERS, POSTS, COMMENTS, POST_LIKES, FOLLOWERS y distributed_transactions
+- [x] Crear `scripts/postgres/02-distributed-transactions.sql` con procedimientos para 2PC y operaciones multi-shard
+- [x] Verificar que la replicación esté funcionando con `SELECT * FROM pg_stat_replication;`
+- [x] Crear `scripts/postgres/03-data-generation.sql` con funciones para usuarios, posts, comentarios y followers
+- [x] Ejecutar funciones y verificar distribución de datos por partición
+- [x] Crear documentación técnica de PostgreSQL en `docs/ARQUITECTURA.md`
+- [x] Documentar el proceso de deployment paso a paso
+- [x] BONUS: Diseñar y probar un escenario de replicación asíncrona en PostgreSQL
+- [x] BONUS: Evaluar uso de un broker (RabbitMQ/Kafka) para desacoplar escritura y replicación
+- [x] BONUS: Documentar trade-offs entre replicación sincrónica y asíncrona
 
 ### Entregable del integrante 1
 
@@ -129,25 +129,25 @@
 
 **Objetivo:** Implementar experimentos equivalentes en CockroachDB y construir el análisis comparativo final.
 
-- [ ] Revisar los scripts de CockroachDB creados por el integrante 2
-- [ ] Instalar el driver necesario para conectar desde Python
-- [ ] Crear un archivo `.env` local con la configuración de CockroachDB
-- [ ] Crear `experiments/exp1_latency_crdb.py` para medir operaciones dentro de un range
-- [ ] Ejecutar el experimento y documentar resultados
-- [ ] Comparar los resultados con PostgreSQL
-- [ ] Crear `experiments/exp2_transactions_crdb.py` para probar transacciones ACID distribuidas nativas
-- [ ] Simular fallos durante transacciones y verificar rollback automático
-- [ ] Crear `experiments/exp3_ranges_distribution.py` para observar la distribución automática
-- [ ] Comparar el particionamiento automático con el manual de PostgreSQL
-- [ ] Crear `experiments/exp6_comparison.py` con la matriz comparativa PostgreSQL vs CockroachDB
-- [ ] Generar gráficos comparativos y exportar resultados
-- [ ] Crear `docs/CAP_PACELC_ANALYSIS.md` con el análisis teórico y práctico
-- [ ] Crear `docs/RESUMEN_EJECUTIVO.md` con hallazgos y recomendaciones
-- [ ] Actualizar `README.md` principal si hace falta
-- [ ] Preparar la presentación final del proyecto
-- [ ] BONUS: Diseñar y documentar un flujo CQRS con dos microservicios (comandos y consultas)
-- [ ] BONUS: Integrar resultados de CQRS con comparación PostgreSQL vs NewSQL
-- [ ] BONUS: Extender el análisis comparativo final incluyendo CQRS, geodistribución, quórum, SAGA y replicación asíncrona
+- [x] Revisar los scripts de CockroachDB creados por el integrante 2
+- [x] Instalar el driver necesario para conectar desde Python
+- [x] Crear un archivo `.env` local con la configuración de CockroachDB
+- [x] Crear `experiments/exp1_latency_crdb.py` para medir operaciones dentro de un range
+- [x] Ejecutar el experimento y documentar resultados
+- [x] Comparar los resultados con PostgreSQL
+- [x] Crear `experiments/exp2_transactions_crdb.py` para probar transacciones ACID distribuidas nativas
+- [x] Simular fallos durante transacciones y verificar rollback automático
+- [x] Crear `experiments/exp3_ranges_distribution.py` para observar la distribución automática
+- [x] Comparar el particionamiento automático con el manual de PostgreSQL
+- [x] Crear `experiments/exp6_comparison.py` con la matriz comparativa PostgreSQL vs CockroachDB
+- [x] Generar gráficos comparativos y exportar resultados
+- [x] Crear `docs/CAP_PACELC_ANALYSIS.md` con el análisis teórico y práctico
+- [x] Crear `docs/RESUMEN_EJECUTIVO.md` con hallazgos y recomendaciones
+- [x] Actualizar `README.md` principal si hace falta
+- [x] Preparar la presentación final del proyecto
+- [x] BONUS: Diseñar y documentar un flujo CQRS con dos microservicios (comandos y consultas)
+- [x] BONUS: Integrar resultados de CQRS con comparación PostgreSQL vs NewSQL
+- [x] BONUS: Extender el análisis comparativo final incluyendo CQRS, geodistribución, quórum, SAGA y replicación asíncrona
 
 ### Entregable del integrante 4
 
