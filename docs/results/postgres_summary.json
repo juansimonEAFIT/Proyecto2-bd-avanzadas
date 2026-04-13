@@ -1,0 +1,55 @@
+{
+  "experiments": {
+    "exp1": {
+      "available": true,
+      "status": "ok",
+      "metrics": {
+        "write_mean_ms": 235.0066,
+        "read_primary_mean_ms": 234.7786,
+        "read_replica1_mean_ms": 247.2385,
+        "read_replica2_mean_ms": 234.4259
+      },
+      "interpretation": "La linea base compara escritura en el primary y lecturas por PK entre primary y replicas."
+    },
+    "exp3": {
+      "available": true,
+      "status": "ok",
+      "metrics": {
+        "sync_per_insert_ms": 0.0659,
+        "async_per_insert_ms": 0.0286,
+        "async_improvement_pct": 56.6
+      },
+      "interpretation": "Este experimento cuantifica el costo de habilitar confirmacion sincronica de replicas."
+    },
+    "exp4": {
+      "available": true,
+      "status": "committed",
+      "metrics": {
+        "elapsed_ms": 239.2275,
+        "source_shard": 1,
+        "target_shard": 2
+      },
+      "interpretation": "Se documenta coordinacion manual entre shards logicos y una aproximacion de rollback controlado."
+    },
+    "exp5": {
+      "available": true,
+      "status": "dry-run",
+      "metrics": {
+        "replica_count": 2
+      },
+      "interpretation": "El failover queda documentado como procedimiento manual con evidencia del estado previo."
+    }
+  },
+  "raw_files_present": {
+    "exp1": true,
+    "exp3": true,
+    "exp4": true,
+    "exp5": true
+  },
+  "source_files": {
+    "exp1": "C:\\Users\\57318\\EAFIT\\Semestre_6\\Bases_datos_avanzadas\\Proyecto_2\\Proyecto2-bd-avanzadas\\docs\\results\\exp1_latency_intra_shard.json",
+    "exp3": "C:\\Users\\57318\\EAFIT\\Semestre_6\\Bases_datos_avanzadas\\Proyecto_2\\Proyecto2-bd-avanzadas\\docs\\results\\exp3_replication_sync.json",
+    "exp4": "C:\\Users\\57318\\EAFIT\\Semestre_6\\Bases_datos_avanzadas\\Proyecto_2\\Proyecto2-bd-avanzadas\\docs\\results\\exp4_distributed_transactions.json",
+    "exp5": "C:\\Users\\57318\\EAFIT\\Semestre_6\\Bases_datos_avanzadas\\Proyecto_2\\Proyecto2-bd-avanzadas\\docs\\results\\exp5_failover_recovery.json"
+  }
+}

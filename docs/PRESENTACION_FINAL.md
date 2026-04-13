@@ -17,14 +17,14 @@
 
 ## Slide 4 - Metodologia Experimental
 - Exp1/2/3/6 en CockroachDB
-- Exp3/4/5 en PostgreSQL
+- Exp1/2/3/4/5 en PostgreSQL
 - Instrumentacion con scripts en `experiments/` y salidas en `docs/results/`
 - Graficos finales en `docs/images/`
 
 ## Slide 5 - Resultados de Latencia
 - CockroachDB Exp1 (2026-04-12): write mean 10.31 ms, read mean 4.18 ms
-- PostgreSQL: menor latencia local en operaciones simples
-- CockroachDB: mejor perfil al escalar distribucion y consistencia
+- PostgreSQL Exp1/Exp3: write primary 235.01 ms, read replica2 234.43 ms, mejora async 56.6%
+- CockroachDB: mejor perfil de simplicidad distribuida y consistencia nativa
 
 ## Slide 6 - Transacciones Distribuidas
 - PostgreSQL 2PC: funcional, pero sensible a bloqueos del coordinador
@@ -48,5 +48,5 @@
 
 ## Slide 10 - Evidencia y Cierre
 - Documentos: `docs/CAP_PACELC_ANALYSIS.md`, `docs/RESUMEN_EJECUTIVO.md`, `docs/BONUS.md`
-- Resultados: `docs/results/exp6_comparison.json`
-- Graficos: `docs/images/latency_comparison.png`, `docs/images/throughput_scalability.png`
+- Resultados: `docs/results/exp6_comparison.json`, `docs/results/postgres_explain_analyze.json`
+- Graficos: `docs/images/latency_comparison.png`, `docs/images/throughput_scalability.png`, `docs/images/postgres_explain_analyze.png`

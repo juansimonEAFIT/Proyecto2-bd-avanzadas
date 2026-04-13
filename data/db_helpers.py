@@ -7,29 +7,67 @@ Facilita la conexión a bases de datos y ejecución de experimentos
 import psycopg2
 from psycopg2 import sql, extras
 import time
+import os
 from typing import List, Dict, Any
 from contextlib import contextmanager
+
+
+def build_postgres_env_config(role: str = "primary", application_name: str = None) -> Dict[str, Any]:
+    """Construye configuracion de PostgreSQL a partir del .env.
+
+    role:
+    - primary
+    - replica1
+    - replica2
+    """
+    role_map = {
+        "primary": ("PG_PRIMARY_HOST", "PG_PRIMARY_PORT"),
+        "replica1": ("PG_REPLICA1_HOST", "PG_REPLICA1_PORT"),
+        "replica2": ("PG_REPLICA2_HOST", "PG_REPLICA2_PORT"),
+    }
+    host_key, port_key = role_map.get(role, role_map["primary"])
+    config = {
+        "host": os.getenv(host_key, "localhost"),
+        "port": int(os.getenv(port_key, 5432)),
+        "database": os.getenv("PG_DATABASE", "social_network"),
+        "user": os.getenv("PG_USER", "admin"),
+        "password": os.getenv("PG_PASSWORD", "admin123"),
+        "connect_timeout": int(os.getenv("PG_CONNECT_TIMEOUT", "10")),
+    }
+    if application_name:
+        config["application_name"] = application_name
+    return config
+
 
 class PostgreSQLConnection:
     """Gestor de conexiones a PostgreSQL"""
     
     def __init__(self, host: str, port: int = 5432, database: str = 'social_network',
-                 user: str = 'admin', password: str = 'admin123'):
+                 user: str = 'admin', password: str = 'admin123',
+                 connect_timeout: int = 10, application_name: str = None):
         self.host = host
         self.port = port
         self.database = database
         self.user = user
         self.password = password
+        self.connect_timeout = connect_timeout
+        self.application_name = application_name
         self.conn = None
 
     def connect(self):
         """Establece conexión con la base de datos"""
+        kwargs = {
+            "host": self.host,
+            "port": self.port,
+            "database": self.database,
+            "user": self.user,
+            "password": self.password,
+            "connect_timeout": self.connect_timeout,
+        }
+        if self.application_name:
+            kwargs["application_name"] = self.application_name
         self.conn = psycopg2.connect(
-            host=self.host,
-            port=self.port,
-            database=self.database,
-            user=self.user,
-            password=self.password
+            **kwargs
         )
         return self.conn
 
@@ -83,6 +121,7 @@ class PerformanceTester:
     def measure_insert_latency(self, table: str, values, iterations: int = 100) -> Dict:
         """Mide la latencia de inserciones"""
         latencies = []
+        error_count = 0
         
         for i in range(iterations):
             start = time.time()
@@ -101,13 +140,15 @@ class PerformanceTester:
                 latency = (time.time() - start) * 1000  # Convert to ms
                 latencies.append(latency)
             except Exception as e:
+                error_count += 1
                 print(f"Error en iteración {i}: {e}")
         
-        return self._calculate_stats(latencies)
+        return self._calculate_stats(latencies, error_count=error_count, requested_iterations=iterations)
 
     def measure_select_latency(self, query: str, iterations: int = 100) -> Dict:
         """Mide la latencia de selecciones"""
         latencies = []
+        error_count = 0
         
         for i in range(iterations):
             start = time.time()
@@ -117,13 +158,15 @@ class PerformanceTester:
                 latency = (time.time() - start) * 1000  # Convert to ms
                 latencies.append(latency)
             except Exception as e:
+                error_count += 1
                 print(f"Error en iteración {i}: {e}")
         
-        return self._calculate_stats(latencies)
+        return self._calculate_stats(latencies, error_count=error_count, requested_iterations=iterations)
 
     def measure_join_latency(self, query: str, iterations: int = 100) -> Dict:
         """Mide la latencia de joins (puede ser inter-shard)"""
         latencies = []
+        error_count = 0
         
         for i in range(iterations):
             start = time.time()
@@ -133,13 +176,15 @@ class PerformanceTester:
                 latency = (time.time() - start) * 1000
                 latencies.append(latency)
             except Exception as e:
+                error_count += 1
                 print(f"Error en iteración {i}: {e}")
         
-        return self._calculate_stats(latencies)
+        return self._calculate_stats(latencies, error_count=error_count, requested_iterations=iterations)
 
     def measure_transaction_latency(self, operations: List[str], iterations: int = 100) -> Dict:
         """Mide la latencia de transacciones complejas"""
         latencies = []
+        error_count = 0
         
         for i in range(iterations):
             start = time.time()
@@ -152,9 +197,10 @@ class PerformanceTester:
                 latency = (time.time() - start) * 1000
                 latencies.append(latency)
             except Exception as e:
+                error_count += 1
                 print(f"Error en iteración {i}: {e}")
         
-        return self._calculate_stats(latencies)
+        return self._calculate_stats(latencies, error_count=error_count, requested_iterations=iterations)
 
     def get_table_stats(self, table: str) -> Dict:
         """Obtiene estadísticas de una tabla"""
@@ -202,23 +248,30 @@ class PerformanceTester:
         
         return self.db.execute_query(query)
 
-    def _calculate_stats(self, values: List[float]) -> Dict:
+    def _calculate_stats(self, values: List[float], error_count: int = 0, requested_iterations: int = None) -> Dict:
         """Calcula estadísticas de un conjunto de valores"""
         if not values:
-            return {}
+            return {
+                'count': 0,
+                'requested_iterations': requested_iterations or 0,
+                'error_count': error_count,
+            }
         
         values.sort()
         n = len(values)
+        mean = sum(values) / n
         
         return {
             'count': n,
+            'requested_iterations': requested_iterations or n,
+            'error_count': error_count,
             'min': min(values),
             'max': max(values),
-            'mean': sum(values) / n,
+            'mean': mean,
             'median': values[n // 2],
-            'p95': values[int(n * 0.95)],
-            'p99': values[int(n * 0.99)],
-            'std_dev': (sum((x - (sum(values) / n)) ** 2 for x in values) / n) ** 0.5
+            'p95': values[min(n - 1, int(n * 0.95))],
+            'p99': values[min(n - 1, int(n * 0.99))],
+            'std_dev': (sum((x - mean) ** 2 for x in values) / n) ** 0.5
         }
 
 

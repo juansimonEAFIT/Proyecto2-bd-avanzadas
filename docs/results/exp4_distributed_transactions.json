@@ -1,0 +1,163 @@
+{
+  "environment": {
+    "primary_host": "54.84.181.98",
+    "primary_port": 5432,
+    "database": "social_network"
+  },
+  "success_scenario": {
+    "follower": {
+      "user_id": 1,
+      "username": "pg_exp_sync_on_1",
+      "shard_id": 1
+    },
+    "following": {
+      "user_id": 2,
+      "username": "pg_exp_sync_on_2",
+      "shard_id": 2
+    },
+    "elapsed_ms": 239.2275,
+    "source_shard": 1,
+    "target_shard": 2,
+    "result": "COMMITTED",
+    "distributed_transactions": [
+      {
+        "tx_id": "e0d54cdf-9137-4293-9472-febfbdf31f66",
+        "status": "COMMITTED",
+        "source_shard": 1,
+        "target_shard": 2,
+        "operation_type": "ADD_FOLLOW",
+        "operation_data": {
+          "follower_id": 1,
+          "following_id": 2
+        },
+        "created_at": "2026-04-13 04:14:44.947694",
+        "completed_at": "2026-04-13 04:14:44.947694"
+      }
+    ],
+    "transaction_locks": [
+      {
+        "pid": 7144,
+        "xact_start": "2026-04-13 04:14:45.417893+00:00",
+        "tx_age_seconds": "0.000000",
+        "locktype": "relation",
+        "database": 16384,
+        "relation": 12073,
+        "usename": "admin",
+        "query": "SELECT * FROM v_transaction_locks LIMIT 20;",
+        "query_start": "2026-04-13 04:14:45.495713+00:00"
+      },
+      {
+        "pid": 7144,
+        "xact_start": "2026-04-13 04:14:45.417893+00:00",
+        "tx_age_seconds": "0.000000",
+        "locktype": "relation",
+        "database": 16384,
+        "relation": 12222,
+        "usename": "admin",
+        "query": "SELECT * FROM v_transaction_locks LIMIT 20;",
+        "query_start": "2026-04-13 04:14:45.495713+00:00"
+      },
+      {
+        "pid": 7144,
+        "xact_start": "2026-04-13 04:14:45.417893+00:00",
+        "tx_age_seconds": "0.000000",
+        "locktype": "relation",
+        "database": 16384,
+        "relation": 16829,
+        "usename": "admin",
+        "query": "SELECT * FROM v_transaction_locks LIMIT 20;",
+        "query_start": "2026-04-13 04:14:45.495713+00:00"
+      },
+      {
+        "pid": 7144,
+        "xact_start": "2026-04-13 04:14:45.417893+00:00",
+        "tx_age_seconds": "0.000000",
+        "locktype": "virtualxid",
+        "database": null,
+        "relation": null,
+        "usename": "admin",
+        "query": "SELECT * FROM v_transaction_locks LIMIT 20;",
+        "query_start": "2026-04-13 04:14:45.495713+00:00"
+      },
+      {
+        "pid": 7144,
+        "xact_start": "2026-04-13 04:14:45.417893+00:00",
+        "tx_age_seconds": "0.000000",
+        "locktype": "relation",
+        "database": 0,
+        "relation": 2676,
+        "usename": "admin",
+        "query": "SELECT * FROM v_transaction_locks LIMIT 20;",
+        "query_start": "2026-04-13 04:14:45.495713+00:00"
+      },
+      {
+        "pid": 7144,
+        "xact_start": "2026-04-13 04:14:45.417893+00:00",
+        "tx_age_seconds": "0.000000",
+        "locktype": "relation",
+        "database": 0,
+        "relation": 1262,
+        "usename": "admin",
+        "query": "SELECT * FROM v_transaction_locks LIMIT 20;",
+        "query_start": "2026-04-13 04:14:45.495713+00:00"
+      },
+      {
+        "pid": 7144,
+        "xact_start": "2026-04-13 04:14:45.417893+00:00",
+        "tx_age_seconds": "0.000000",
+        "locktype": "relation",
+        "database": 0,
+        "relation": 1260,
+        "usename": "admin",
+        "query": "SELECT * FROM v_transaction_locks LIMIT 20;",
+        "query_start": "2026-04-13 04:14:45.495713+00:00"
+      },
+      {
+        "pid": 7144,
+        "xact_start": "2026-04-13 04:14:45.417893+00:00",
+        "tx_age_seconds": "0.000000",
+        "locktype": "relation",
+        "database": 0,
+        "relation": 2671,
+        "usename": "admin",
+        "query": "SELECT * FROM v_transaction_locks LIMIT 20;",
+        "query_start": "2026-04-13 04:14:45.495713+00:00"
+      },
+      {
+        "pid": 7144,
+        "xact_start": "2026-04-13 04:14:45.417893+00:00",
+        "tx_age_seconds": "0.000000",
+        "locktype": "relation",
+        "database": 0,
+        "relation": 2672,
+        "usename": "admin",
+        "query": "SELECT * FROM v_transaction_locks LIMIT 20;",
+        "query_start": "2026-04-13 04:14:45.495713+00:00"
+      },
+      {
+        "pid": 7144,
+        "xact_start": "2026-04-13 04:14:45.417893+00:00",
+        "tx_age_seconds": "0.000000",
+        "locktype": "relation",
+        "database": 0,
+        "relation": 2677,
+        "usename": "admin",
+        "query": "SELECT * FROM v_transaction_locks LIMIT 20;",
+        "query_start": "2026-04-13 04:14:45.495713+00:00"
+      }
+    ],
+    "prepared_transactions": []
+  },
+  "rollback_scenario": {
+    "approach": "rollback_controlled",
+    "reason": "El procedure disponible no deja una PREPARE TRANSACTION abierta de forma segura para el cluster remoto.",
+    "locks_seen_inside_transaction": 4,
+    "relationship_count_before": 1,
+    "relationship_count_after_rollback": 1,
+    "rolled_back": true
+  },
+  "notes": [
+    "El proyecto modela 2PC sobre shards logicos/particiones, no sobre un cluster PostgreSQL multi-write nativo.",
+    "Se documenta rollback controlado como aproximacion operativa cuando no conviene dejar prepared transactions abiertas en el entorno compartido."
+  ]
+}

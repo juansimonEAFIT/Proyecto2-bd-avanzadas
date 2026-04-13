@@ -1,0 +1,78 @@
+{
+  "environment": {
+    "primary_host": "54.84.181.98",
+    "primary_port": 5432,
+    "database": "social_network"
+  },
+  "iterations": 100,
+  "benchmark_prefix": "pg_exp",
+  "sync_on": {
+    "commit_mode": "on",
+    "iterations": 100,
+    "inserted_rows": 100,
+    "elapsed_ms": 6.593,
+    "rows_visible_primary": 100,
+    "benchmark_prefix": "pg_exp_sync",
+    "replication_overview": [
+      {
+        "application_name": "postgres-replica-1",
+        "client_addr": "172.18.0.4",
+        "state": "streaming",
+        "sync_state": "sync",
+        "write_lag": "0:00:00.000664",
+        "flush_lag": "0:00:00.001866",
+        "replay_lag": "0:00:00.002394"
+      },
+      {
+        "application_name": "postgres-replica-2",
+        "client_addr": "172.18.0.5",
+        "state": "streaming",
+        "sync_state": "potential",
+        "write_lag": "0:00:00.000919",
+        "flush_lag": "0:00:00.002140",
+        "replay_lag": "0:00:00.002464"
+      }
+    ],
+    "sync_standby_names": "FIRST 1 (\"postgres-replica-1\", \"postgres-replica-2\")",
+    "per_insert_ms": 0.0659
+  },
+  "sync_off": {
+    "commit_mode": "off",
+    "iterations": 100,
+    "inserted_rows": 100,
+    "elapsed_ms": 2.859,
+    "rows_visible_primary": 100,
+    "benchmark_prefix": "pg_exp_async",
+    "replication_overview": [
+      {
+        "application_name": "postgres-replica-1",
+        "client_addr": "172.18.0.4",
+        "state": "streaming",
+        "sync_state": "async",
+        "write_lag": "0:00:00.000475",
+        "flush_lag": "0:00:00.001980",
+        "replay_lag": "0:00:00.002806"
+      },
+      {
+        "application_name": "postgres-replica-2",
+        "client_addr": "172.18.0.5",
+        "state": "streaming",
+        "sync_state": "async",
+        "write_lag": "0:00:00.000500",
+        "flush_lag": "0:00:00.001827",
+        "replay_lag": "0:00:00.002753"
+      }
+    ],
+    "sync_standby_names": "",
+    "per_insert_ms": 0.0286
+  },
+  "summary": {
+    "sync_per_insert_ms": 0.0659,
+    "async_per_insert_ms": 0.0286,
+    "async_improvement_pct": 56.6
+  },
+  "cluster_sync_settings": {
+    "previous": "",
+    "restored_to": ""
+  }
+}

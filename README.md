@@ -322,32 +322,67 @@ python exp3_ranges_distribution.py
 # - Evidencia de auto-sharding administrado por el motor
 ```
 
+### PostgreSQL - Experimento 1: Latencia Intra-Shard
+
+```bash
+python experiments/exp1_latency_intra_shard.py
+
+# Resultado observado (corrida final):
+# - Write primary mean: 235.0066 ms
+# - Read primary mean: 234.7786 ms
+# - Read replica1 mean: 247.2385 ms
+# - Read replica2 mean: 234.4259 ms
+```
+
+### PostgreSQL - Experimento 2: EXPLAIN / EXPLAIN ANALYZE
+
+```bash
+python experiments/exp2_explain_analyze_postgres.py
+
+# Resultado observado:
+# - Insert particionado: 0.253 ms
+# - Intra-shard lookup: 0.141 ms
+# - Inter-shard join logico: 0.688 ms
+# - Agregacion sobre posts: 0.080 ms
+```
+
 ### PostgreSQL - Experimento 3: Replicación Sync vs Async
 
 ```bash
-python exp3_replication_sync.py
+python experiments/exp3_replication_sync.py
 
-# Resultado esperado:
-# - Latencia mayor con synchronous_commit=ON
-# - Trade-off entre consistencia y performance
+# Resultado observado (corrida final):
+# - Sync per insert: 0.0659 ms
+# - Async per insert: 0.0286 ms
+# - Mejora async: 56.6%
 ```
 
 ### PostgreSQL - Experimento 4: Transacciones Distribuidas (2PC)
 
 ```bash
-python exp4_distributed_transactions.py
+python experiments/exp4_distributed_transactions.py
+
+# Resultado observado:
+# - Operacion entre shards logicos 1 -> 2
+# - Estado final: COMMITTED
+# - Tiempo total: 239.2275 ms
 ```
 
 ### PostgreSQL - Experimento 5: Failover y Recuperación
 
 ```bash
-python exp5_failover_recovery.py
+python experiments/exp5_failover_recovery.py
 
 # Proceso:
 # 1. Simular caída del nodo primario
 # 2. Promover una réplica a primaria
 # 3. Medir tiempo de recuperación
 # 4. Verificar no hay split-brain
+
+# Estado observado en dry-run:
+# - Primary fuera de recovery
+# - Replica 1 y Replica 2 en recovery
+# - Ambas replicas visibles en pg_stat_replication
 ```
 
 ### Experimento 6: Comparación PostgreSQL vs CockroachDB
@@ -369,26 +404,134 @@ python exp6_comparison.py
 
 | Métrica | PostgreSQL | CockroachDB | Observación |
 |---------|-----------|------------|-------------|
-| Latencia Write (ms) | 5-15 | 15-25 | CockroachDB: overhead por coordinación Raft |
-| Latencia Read (ms) | 2-8 | 10-20 | PostgreSQL: más rápido si no hay joins inter-shard |
-| Latencia Join Inter-shard (ms) | 100-500+ | 50-200 | CockroachDB: mejor optimizer distribuido |
-| Escalabilidad Horizontal | Manual | Automática | CockroachDB: redimensionamiento sin intervención |
-| Transacciones 2PC (ms) | 50-200+ | Nativo (30-100) | CockroachDB: transacciones distribuidas nativas |
+| Latencia Write base (ms) | 235.0066 | 8.788 | En esta corrida remota PostgreSQL pagó mayor RTT hacia AWS |
+| Latencia Read base (ms) | 234.7786 | 4.952 | CockroachDB mostró menor latencia base en la medición actual |
+| Lectura en réplica (ms) | 247.2385 / 234.4259 | N/A | PostgreSQL permitió validar lectura real desde replica 1 y 2 |
+| Sync vs Async (ms/insert) | 0.0659 / 0.0286 | N/A | Async mejoró 56.6% frente a sync |
+| Transacción distribuida (ms) | 239.2275 | Nativo | PostgreSQL requiere coordinación manual tipo 2PC |
 | Failover (segundos) | Manual (~60-300) | Automático (10-30) | CockroachDB: más rápido y automático |
 
 ### Gráficos de Resultados
 
 ![Comparación de Latencia](docs/images/latency_comparison.png)
-*Comparativa de latencia en escritura, lectura y joins distribuidos.*
+*Comparativa general de latencia entre PostgreSQL y CockroachDB usando los resultados actuales persistidos en `docs/results/`.*
 
 ![Escalabilidad Throughput](docs/images/throughput_scalability.png)
 *Escalabilidad de Transacciones por Segundo (TPS).*
 
+![PostgreSQL Resumen](docs/images/postgres_summary_latency.png)
+*Resumen de latencias principales del frente PostgreSQL.*
+
+![PostgreSQL Nodos](docs/images/postgres_intra_shard_nodes.png)
+*Comparación de escritura en primary y lectura en primary vs réplicas PostgreSQL.*
+
+![PostgreSQL Explain Analyze](docs/images/postgres_explain_analyze.png)
+*Resumen de tiempos de ejecución de las pruebas `EXPLAIN ANALYZE` sobre PostgreSQL.*
+
+![PostgreSQL Sync vs Async](docs/images/postgres_replication_sync_vs_async.png)
+*Impacto de `synchronous_commit=on` vs `off` en el cluster PostgreSQL.*
+
 ### Artefactos de Resultados
 
+- `docs/results/exp1_latency_intra_shard.json`
+- `docs/results/postgres_explain_analyze.json`
+- `docs/results/exp3_replication_sync.json`
+- `docs/results/exp4_distributed_transactions.json`
+- `docs/results/exp5_failover_recovery.json`
+- `docs/results/postgres_summary.json`
 - `docs/results/exp6_comparison.json`
 - `docs/EXPERIMENTOS.md` (registro de ejecuciones y observaciones)
+- `docs/RESULTADOS.md` (reporte técnico del frente PostgreSQL)
 - `docs/PRESENTACION_FINAL.md` (guion final de presentacion)
+
+---
+
+## Análisis Crítico
+
+### Experiencia de Aprendizaje del Equipo
+
+Este proyecto confirmó una idea importante de la unidad 2: distribuir una base de datos no significa automáticamente mejorar el sistema. En PostgreSQL, cada ganancia en control y flexibilidad vino acompañada de mayor carga mental y operativa: particionamiento manual, monitoreo de réplicas, coordinación de 2PC y failover manual. En CockroachDB, la distribución fue mucho más transparente, pero esa comodidad vino con una penalización de latencia base y con la necesidad de entender mejor conceptos como quórum, leaseholders y consenso Raft.
+
+### Reflexión Industrial
+
+Desde una perspectiva industrial, el aprendizaje más valioso fue diferenciar entre una arquitectura que "funciona en laboratorio" y una que se sostiene operativamente en producción. PostgreSQL permite construir una solución distribuida competente, pero exige disciplina de ingeniería adicional en observabilidad, promoción de réplicas, compensaciones y manejo de fallos. CockroachDB reduce varias de esas cargas, pero introduce dependencia en un motor más especializado y en decisiones de infraestructura distribuidas por diseño.
+
+### Pensamiento Crítico del Equipo
+
+La conclusión del equipo no es que un motor sea universalmente mejor, sino que cada uno resuelve problemas distintos:
+
+- PostgreSQL sigue siendo una excelente opción cuando se prioriza madurez del ecosistema, control fino y compatibilidad operativa.
+- CockroachDB es más fuerte cuando la necesidad real es consistencia distribuida, failover automático y menor fricción para escalar horizontalmente.
+- En una red social real, una arquitectura híbrida o un patrón CQRS puede ser más realista que una decisión monolítica por un solo motor.
+
+### Casos de Uso Reales
+
+El ejercicio también acercó el proyecto a escenarios industriales plausibles:
+
+- redes sociales con altísima lectura y escritura concentrada en relaciones sociales y contenido
+- plataformas que separan el write-model del read-model
+- sistemas donde la latencia local importa, pero también importan la tolerancia a fallos y la recuperación operacional
+
+---
+
+## Impacto en Costos
+
+### PostgreSQL
+
+- menor costo de licenciamiento y mayor disponibilidad de talento en mercado
+- posibilidad de operar sobre infraestructura conocida y más simple en etapas tempranas
+- costo oculto mayor en horas de ingeniería y DevOps para particionamiento, failover, monitoreo y recuperación
+
+### CockroachDB
+
+- mayor costo conceptual y operativo inicial por ser una tecnología más especializada
+- reducción de costos manuales de operación gracias a distribución nativa, consenso y recuperación automática
+- mejor proyección para crecimiento cuando el costo dominante deja de ser infraestructura y pasa a ser complejidad operacional
+
+### Conclusión de Costos
+
+No todo lo que parece más “sofisticado” es automáticamente más costoso en el largo plazo. PostgreSQL puede ser más barato al inicio, pero en escenarios realmente distribuidos el costo humano de mantener la solución puede crecer rápido. CockroachDB puede parecer más costoso en adopción, pero compensa con menos fricción para escalar y recuperarse de fallos.
+
+---
+
+## Impacto en Administración
+
+### Administración de una Base Centralizada
+
+- menor complejidad de operación
+- monitoreo y respaldo más directos
+- menor superficie de fallo
+
+### Administración de una Base Distribuida con PostgreSQL
+
+- requiere mayor intervención manual
+- obliga a documentar rutas de enrutamiento, particiones, réplicas y promoción de nodos
+- 2PC y failover incrementan la carga administrativa y la probabilidad de errores humanos
+
+### Administración de un Servicio Distribuido Nativo
+
+- la base de datos absorbe más complejidad internamente
+- disminuye la necesidad de scripts y procedimientos manuales para operaciones cotidianas
+- la administración se mueve desde tareas manuales de base de datos hacia observabilidad, capacidad y política de despliegue
+
+### Conclusión Operacional
+
+La administración de un sistema distribuido no es solo un problema técnico, sino organizacional. PostgreSQL ofrece control, pero exige más disciplina operativa. CockroachDB exige entender mejor el motor, pero simplifica muchas tareas repetitivas y de recuperación.
+
+---
+
+## Checklist de Entrega
+
+- `infra/` contiene `docker-compose` para PostgreSQL, CockroachDB, latencia y bonus CQRS
+- `scripts/` contiene inicialización, particionamiento, 2PC, generación de datos y experimentos
+- `README.md` documenta arquitectura, replicación, particionamiento, consistencia, resultados y análisis
+- `docs/EXPERIMENTOS.md` registra la ejecución detallada de experimentos
+- `docs/RESULTADOS.md` consolida hallazgos técnicos
+- `docs/CAP_PACELC_ANALYSIS.md` cubre la comparación teórica y práctica CAP/PACELC
+- `docs/RESUMEN_EJECUTIVO.md` resume hallazgos y recomendación final
+- `docs/PRESENTACION_FINAL.md` deja preparado el guion de exposición
+- `docs/results/` contiene resultados persistidos
+- `docs/images/` contiene gráficas y evidencias visuales relevantes, incluidas capturas de `EXPLAIN ANALYZE`
 
 ---
 

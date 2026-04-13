@@ -1,14 +1,28 @@
 {
+  "environment": {
+    "primary_host": "54.84.181.98",
+    "primary_port": 5432,
+    "replica1_host": "54.84.181.98",
+    "replica1_port": 5433,
+    "replica2_host": "54.84.181.98",
+    "replica2_port": 5434,
+    "database": "social_network"
+  },
+  "connectivity": {
+    "primary": {
+      "available": true,
+      "label": "primary"
+    },
+    "replica1": {
+      "available": true,
+      "label": "replica1"
+    },
+    "replica2": {
+      "available": true,
+      "label": "replica2"
+    }
+  },
   "iterations": 100,
-  "write_mean_ms": 3.834,
-  "write_median_ms": 3.584,
-  "write_p95_ms": 5.668,
-  "read_mean_ms": 1.653,
-  "read_median_ms": 1.999,
-  "read_p95_ms": 2.512,
-  "join_mean_ms": 1.953,
-  "join_median_ms": 2.002,
-  "join_p95_ms": 3.286,
   "sample_partitions": [
     {
       "user_id": 1,
@@ -22,5 +36,75 @@
       "user_id": 3,
       "partition_name": "users_p2"
     }
+  ],
+  "sample_user": [
+    {
+      "user_id": 1,
+      "partition_name": "users_p3"
+    }
+  ],
+  "write_primary": {
+    "count": 100.0,
+    "requested_iterations": 100.0,
+    "error_count": 0.0,
+    "min": 226.9418,
+    "max": 252.7456,
+    "mean": 235.0066,
+    "median": 233.9015,
+    "p95": 247.062,
+    "p99": 252.7456,
+    "std_dev": 5.1728
+  },
+  "read_primary": {
+    "count": 100.0,
+    "requested_iterations": 100.0,
+    "error_count": 0.0,
+    "min": 226.9297,
+    "max": 269.3725,
+    "mean": 234.7786,
+    "median": 232.0344,
+    "p95": 247.6885,
+    "p99": 269.3725,
+    "std_dev": 6.887
+  },
+  "read_replica1": {
+    "count": 100.0,
+    "requested_iterations": 100.0,
+    "error_count": 0.0,
+    "min": 227.0298,
+    "max": 1359.127,
+    "mean": 247.2385,
+    "median": 234.0693,
+    "p95": 254.375,
+    "p99": 1359.127,
+    "std_dev": 112.0611
+  },
+  "read_replica2": {
+    "count": 100.0,
+    "requested_iterations": 100.0,
+    "error_count": 0.0,
+    "min": 226.8746,
+    "max": 261.157,
+    "mean": 234.4259,
+    "median": 233.2344,
+    "p95": 245.8565,
+    "p99": 261.157,
+    "std_dev": 5.5603
+  },
+  "secondary_join_metric": {
+    "count": 20.0,
+    "requested_iterations": 20.0,
+    "error_count": 0.0,
+    "min": 227.977,
+    "max": 258.678,
+    "mean": 234.9095,
+    "median": 232.0828,
+    "p95": 258.678,
+    "p99": 258.678,
+    "std_dev": 7.4824
+  },
+  "notes": [
+    "La metrica principal de este experimento es la latencia de escritura en el primary y la lectura por PK en primary y replicas.",
+    "El join se conserva como metrica secundaria para contexto, no como indicador principal de intra-shard."
   ]
 }
