@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 import json
+from datetime import datetime, timezone
+from pathlib import Path
 import psycopg2
+
+ROOT = Path(__file__).resolve().parents[1]
+RESULTS_DIR = ROOT / "docs" / "results"
+RESULT_PATH = RESULTS_DIR / "bonus_saga_postgres.json"
 
 PG_CFG = {
     "host": "localhost",
@@ -43,5 +49,13 @@ def show_recent_sagas(limit: int = 10):
 if __name__ == "__main__":
     run_saga(1, "SAGA bonus workflow test")
     rows = show_recent_sagas()
+    payload = {
+        "executed_at_utc": datetime.now(timezone.utc).isoformat(),
+        "recent_sagas": rows,
+        "count": len(rows),
+    }
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    RESULT_PATH.write_text(json.dumps(payload, default=str, indent=2, ensure_ascii=False), encoding="utf-8")
     print("SAGA demo completed")
     print(json.dumps(rows, default=str, indent=2))
+    print(f"[+] Resultado guardado en {RESULT_PATH}")

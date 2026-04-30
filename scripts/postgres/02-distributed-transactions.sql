@@ -10,14 +10,14 @@
 -- Esta es una operación que afecta dos nodos diferentes
 
 -- Paso 1: Conectarse al nodo primario y preparar la transacción
-BEGIN;
+-- BEGIN;
 
--- Fase 1: PREPARE TRANSACTION
--- En el nodo 1 (User A: user_id = 1, hash mod 3 = 1 -> Shard 1)
-UPDATE users SET follower_count = follower_count + 1 
-WHERE user_id = 1;
+-- -- Fase 1: PREPARE TRANSACTION
+-- -- En el nodo 1 (User A: user_id = 1, hash mod 3 = 1 -> Shard 1)
+-- UPDATE users SET follower_count = follower_count + 1 
+-- WHERE user_id = 1;
 
-PREPARE TRANSACTION 'tx_follow_201';
+-- PREPARE TRANSACTION 'tx_follow_201';
 
 -- Paso 2: Conectarse al segundo nodo y preparar
 -- (Simular en postgres-replica-1 o postgres-replica-2 conectándose como si fuera otro nodo)
@@ -56,10 +56,10 @@ SELECT * FROM pg_prepared_xacts;
 
 -- Monitor para transacciones largas
 CREATE OR REPLACE VIEW v_transaction_locks AS
-SELECT 
-    t.trx_id,
-    t.trx_started,
-    EXTRACT(EPOCH FROM (NOW() - t.trx_started)) as trx_age_seconds,
+SELECT
+    a.pid,
+    a.xact_start,
+    EXTRACT(EPOCH FROM (NOW() - a.xact_start)) AS tx_age_seconds,
     l.locktype,
     l.database,
     l.relation,
@@ -68,9 +68,8 @@ SELECT
     a.query_start
 FROM pg_catalog.pg_stat_activity a
 JOIN pg_catalog.pg_locks l ON a.pid = l.pid
-JOIN pg_catalog.pg_stat_activity t ON l.pid = t.pid
-WHERE t.trx_started IS NOT NULL
-ORDER BY t.trx_started DESC;
+WHERE a.xact_start IS NOT NULL
+ORDER BY a.xact_start DESC;
 
 -- ============================================================================
 -- PROCEDURE: Simular 2PC para seguidor en diferentes nodos
@@ -90,41 +89,46 @@ BEGIN
     v_tx_id := gen_random_uuid();
     v_follower_shard := p_follower_id % 3;
     v_following_shard := p_following_id % 3;
-    
-    -- Log de transacción distribuida
-    INSERT INTO distributed_transactions (tx_id, status, source_shard, target_shard, operation_type, operation_data)
-    VALUES (v_tx_id, 'PREPARED', v_follower_shard, v_following_shard, 'ADD_FOLLOW', 
-            jsonb_build_object('follower_id', p_follower_id, 'following_id', p_following_id));
-    
-    -- Fase de Prepare
+
+    INSERT INTO distributed_transactions (
+        tx_id,
+        status,
+        source_shard,
+        target_shard,
+        operation_type,
+        operation_data
+    )
+    VALUES (
+        v_tx_id,
+        'PREPARED',
+        v_follower_shard,
+        v_following_shard,
+        'ADD_FOLLOW',
+        jsonb_build_object(
+            'follower_id', p_follower_id,
+            'following_id', p_following_id
+        )
+    );
+
     BEGIN
-        -- Intenta insertar en la tabla followers
-        INSERT INTO followers (follower_id, following_id) 
+        INSERT INTO followers (follower_id, following_id)
         VALUES (p_follower_id, p_following_id);
-        
-        -- Si es mismo shard, solo una transacción
-        IF v_follower_shard = v_following_shard THEN
-            UPDATE distributed_transactions 
-            SET status = 'COMMITTED', completed_at = CURRENT_TIMESTAMP
-            WHERE tx_id = v_tx_id;
-        ELSE
-            -- Para diferentes shards, requeriría coordinación entre nodos
-            UPDATE distributed_transactions 
-            SET status = 'COMMITTED', completed_at = CURRENT_TIMESTAMP
-            WHERE tx_id = v_tx_id;
-        END IF;
-        
-        COMMIT;
-        RAISE NOTICE 'Follow relationship created successfully for TX: %', v_tx_id;
-        
-    EXCEPTION WHEN OTHERS THEN
-        UPDATE distributed_transactions 
-        SET status = 'ABORTED', completed_at = CURRENT_TIMESTAMP
+
+        UPDATE distributed_transactions
+        SET status = 'COMMITTED',
+            completed_at = CURRENT_TIMESTAMP
         WHERE tx_id = v_tx_id;
-        ROLLBACK;
+
+        RAISE NOTICE 'Follow relationship created successfully for TX: %', v_tx_id;
+
+    EXCEPTION WHEN OTHERS THEN
+        UPDATE distributed_transactions
+        SET status = 'ABORTED',
+            completed_at = CURRENT_TIMESTAMP
+        WHERE tx_id = v_tx_id;
+
         RAISE EXCEPTION 'Distributed transaction failed: %', SQLERRM;
     END;
-    
 END;
 $$;
 

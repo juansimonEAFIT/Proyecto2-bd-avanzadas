@@ -1,0 +1,87 @@
+{
+  "mode": "dry-run",
+  "environment": {
+    "primary_host": "54.84.181.98",
+    "primary_port": 5432,
+    "database": "social_network"
+  },
+  "pre_failover_state": {
+    "primary": {
+      "role": "primary",
+      "host": "54.84.181.98",
+      "port": 5432,
+      "is_in_recovery": false,
+      "observed_at": "2026-04-13 04:33:25.129309+00:00",
+      "sample_read": [
+        {
+          "user_id": 1,
+          "username": "pg_exp_sync_on_1"
+        }
+      ]
+    },
+    "replica1": {
+      "role": "replica1",
+      "host": "54.84.181.98",
+      "port": 5433,
+      "is_in_recovery": true,
+      "observed_at": "2026-04-13 04:33:25.979545+00:00",
+      "sample_read": [
+        {
+          "user_id": 1,
+          "username": "pg_exp_sync_on_1"
+        }
+      ]
+    },
+    "replica2": {
+      "role": "replica2",
+      "host": "54.84.181.98",
+      "port": 5434,
+      "is_in_recovery": true,
+      "observed_at": "2026-04-13 04:33:26.841749+00:00",
+      "sample_read": [
+        {
+          "user_id": 1,
+          "username": "pg_exp_sync_on_1"
+        }
+      ]
+    },
+    "replication_status": [
+      {
+        "application_name": "postgres-replica-1",
+        "client_addr": "172.18.0.4",
+        "state": "streaming",
+        "write_lag": null,
+        "flush_lag": null,
+        "replay_lag": null
+      },
+      {
+        "application_name": "postgres-replica-2",
+        "client_addr": "172.18.0.5",
+        "state": "streaming",
+        "write_lag": null,
+        "flush_lag": null,
+        "replay_lag": null
+      }
+    ]
+  },
+  "manual_commands": [
+    "ssh -i .\\P2-bd-avanzadas.pem ubuntu@54.84.181.98",
+    "cd ~/proyecto2",
+    "sudo docker stop postgres-primary",
+    "sudo docker exec -it postgres-replica-1 psql -U admin -d social_network -c \"SELECT pg_promote();\"",
+    "sudo docker exec -it postgres-replica-1 psql -U admin -d social_network -c \"SELECT pg_is_in_recovery();\"",
+    "sudo docker exec -it postgres-replica-1 psql -U admin -d social_network -c \"SELECT count(*) FROM users;\""
+  ],
+  "recovery_steps": [
+    "detener el primary y confirmar que deja de responder",
+    "promover postgres-replica-1 con pg_promote()",
+    "verificar que pg_is_in_recovery() devuelva false en la nueva primary",
+    "actualizar temporalmente el host de escritura de la aplicacion hacia la replica promovida",
+    "validar lectura y una escritura de prueba en la nueva primary",
+    "reconstruir el nodo original como replica antes de volver a topologia estable"
+  ],
+  "notes": [
+    "Este script no ejecuta failover real por defecto; deja evidencia y procedimiento reproducible en modo dry-run.",
+    "El costo operativo del failover en PostgreSQL sigue siendo manual frente a motores distribuidos nativos."
+  ]
+}

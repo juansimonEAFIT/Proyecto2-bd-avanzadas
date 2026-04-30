@@ -19,8 +19,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Contiene 1M+ de usuarios, particionada por hash en 3 nodos
 CREATE TABLE users (
     user_id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(255) UNIQUE NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
     full_name VARCHAR(255),
     bio TEXT,
     profile_picture_url VARCHAR(512),
@@ -88,11 +88,12 @@ CREATE TABLE comments_P3 PARTITION OF comments FOR VALUES WITH (MODULUS 3, REMAI
 -- ============================================================================
 -- Relación de likes en posts y comentarios
 CREATE TABLE post_likes (
-    like_id BIGSERIAL PRIMARY KEY,
+    like_id BIGSERIAL,
     post_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(post_id, user_id)
+    PRIMARY KEY (user_id, like_id),
+    UNIQUE (post_id, user_id)
 ) PARTITION BY HASH (user_id);
 
 CREATE TABLE post_likes_P1 PARTITION OF post_likes FOR VALUES WITH (MODULUS 3, REMAINDER 0);
@@ -133,6 +134,7 @@ CREATE TABLE distributed_transactions (
 -- INDICES
 -- ============================================================================
 CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_created_at ON users(created_at);
 CREATE INDEX idx_posts_user_id ON posts(user_id);
 CREATE INDEX idx_posts_created_at ON posts(created_at DESC);

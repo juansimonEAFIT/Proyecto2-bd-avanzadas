@@ -5,6 +5,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$ResultsDir = Join-Path $PSScriptRoot "..\docs\results"
+$ResultPath = Join-Path $ResultsDir "bonus_quorum_geodistribution.json"
 
 function Invoke-CrdbSql {
 	param(
@@ -101,5 +103,22 @@ docker start cockroach-node2-latency *> $null
 docker start cockroach-node3-latency *> $null
 Wait-CrdbReady
 Invoke-CrdbSql "SET allow_unsafe_internals = true; SELECT node_id, locality, sql_address, is_live FROM crdb_internal.gossip_nodes ORDER BY node_id;"
+
+New-Item -ItemType Directory -Path $ResultsDir -Force | Out-Null
+$payload = [ordered]@{
+	executed_at_utc = (Get-Date).ToUniversalTime().ToString("o")
+	delay_ms = $DelayMs
+	duration_seconds = $DurationSeconds
+	writes = $Writes
+	latency_ms = [ordered]@{
+		average = [Math]::Round($avg, 2)
+		minimum = [Math]::Round($min, 2)
+		maximum = [Math]::Round($max, 2)
+		raw = $timings
+	}
+	quorum_write_rejected = $quorumFailed
+}
+$payload | ConvertTo-Json -Depth 6 | Set-Content -Encoding UTF8 $ResultPath
+Write-Host "[+] Resultado guardado en $ResultPath"
 
 Write-Host "Bonus geodistribucion + latencia + quorum finalizado"

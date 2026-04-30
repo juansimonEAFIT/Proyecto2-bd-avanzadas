@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 import json
 import time
+from datetime import datetime, timezone
+from pathlib import Path
 import psycopg2
+
+ROOT = Path(__file__).resolve().parents[1]
+RESULTS_DIR = ROOT / "docs" / "results"
+RESULT_PATH = RESULTS_DIR / "bonus_cqrs_demo.json"
 
 COMMAND_CFG = {
     "host": "localhost",
@@ -109,6 +115,18 @@ if __name__ == "__main__":
     projected = project_events_to_read_model()
     feed = query_user_feed(user_id)
 
+    payload = {
+        "executed_at_utc": datetime.now(timezone.utc).isoformat(),
+        "user_id": user_id,
+        "projected_events": projected,
+        "feed_size": len(feed),
+        "feed_preview": feed[:5],
+    }
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    with RESULT_PATH.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, default=str, indent=2, ensure_ascii=False)
+
     print("CQRS demo completed")
     print(f"Projected events: {projected}")
     print(json.dumps(feed, default=str, indent=2))
+    print(f"[+] Resultado guardado en {RESULT_PATH}")

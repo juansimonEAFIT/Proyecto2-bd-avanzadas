@@ -1,0 +1,20 @@
+{
+  "executed_at_utc": "2026-04-13T02:57:02.838503+00:00",
+  "user_id": 101,
+  "projected_events": 1,
+  "feed_size": 2,
+  "feed_preview": [
+    [
+      2,
+      101,
+      "CQRS bonus post for distributed databases",
+      "2026-04-13 02:57:02.746186"
+    ],
+    [
+      1,
+      101,
+      "CQRS bonus post for distributed databases",
+      "2026-04-13 02:40:30.829189"
+    ]
+  ]
+}
