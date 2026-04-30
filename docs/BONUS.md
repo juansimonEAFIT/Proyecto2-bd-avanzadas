@@ -17,37 +17,15 @@ Pasos:
    `python experiments/bonus_cqrs_demo.py`
 3. Validar que el evento se proyecte del modelo de comando al de lectura.
 
-Nota:
-- Este bonus muestra desacoplamiento entre escritura y lectura.
-- RabbitMQ se usa como soporte del flujo por eventos.
-
 ## 2. Replicacion Asincronica PostgreSQL
 
-Archivos:
+Archivo:
 - `scripts/postgres/05-bonus-async-replication.sql`
-- `experiments/bonus_async_replication_postgres.py`
 
 Pasos:
 1. Ejecutar script en PostgreSQL primary.
-2. Correr benchmark con `synchronous_commit = off`.
+2. Correr `CALL sp_async_write_benchmark(1000);` con `synchronous_commit = off`.
 3. Repetir con `synchronous_commit = on` y comparar latencia.
-
-Ejecucion recomendada:
-1. Cargar objetos SQL:
-   `psql -h localhost -U admin -d social_network -f scripts/postgres/05-bonus-async-replication.sql`
-2. Ejecutar benchmark automatizado:
-   `python experiments/bonus_async_replication_postgres.py`
-
-Evidencia validada:
-- el script fuerza una corrida sync real y luego una async
-- las replicas cambian de `sync_state = sync/potential` a `sync_state = async`
-- las filas quedan visibles en primary y replicas
-
-Ultima corrida registrada:
-- fecha: `2026-04-13`
-- sync por insercion: `0.0289 ms`
-- async por insercion: `0.0305 ms`
-- variacion async observada: `-5.45%` (en esta corrida, async fue ligeramente mas lenta)
 
 ## 3. SAGA sobre PostgreSQL
 
@@ -112,7 +90,7 @@ Conclusiones esperadas:
 
 ### 4.1 Resultados observados (ejecucion real)
 
-Fecha de ejecucion: 2026-04-13
+Fecha de ejecucion: 2026-04-12
 
 Configuracion usada:
 1. `DelayMs = 180`
@@ -120,9 +98,9 @@ Configuracion usada:
 3. `Writes = 12`
 
 Resultado de latencia de escrituras:
-1. Promedio: 480.00 ms
-2. Minimo: 420.81 ms
-3. Maximo: 602.16 ms
+1. Promedio: 432.18 ms
+2. Minimo: 396.46 ms
+3. Maximo: 515.21 ms
 
 Resultado de quorum insuficiente:
 1. Se detuvieron `cockroach-node2-latency` y `cockroach-node3-latency`.
@@ -141,22 +119,3 @@ Interpretacion:
 - Registro de SAGA completada y compensada.
 - Resultado de CQRS mostrando proyeccion del evento.
 - Conclusiones de disponibilidad vs consistencia en quorum.
-
-## 6. Integracion final con la comparacion PostgreSQL vs NewSQL
-
-Resumen integrado (2026-04-13):
-1. **CQRS**: validado con dos bases desacopladas (comando/consulta) y proyeccion de eventos operativa.
-2. **Replicacion asincronica**: en esta corrida puntual, el modo async no mejoro la latencia media frente a sync (`-5.45%`).
-3. **SAGA**: ruta de compensacion disponible para evitar bloqueos prolongados en flujos distribuidos de PostgreSQL.
-4. **Geodistribucion y quorum**: CockroachDB mantuvo el comportamiento CP esperado; con perdida de mayoria se rechazaron escrituras (`SQLSTATE 40003`).
-
-Artefactos de evidencia ejecutada:
-1. `docs/results/bonus_cqrs_demo.json`
-2. `docs/results/bonus_async_replication_postgres.json`
-3. `docs/results/bonus_saga_postgres.json`
-4. `docs/results/bonus_quorum_geodistribution.json`
-
-Lectura arquitectonica consolidada:
-1. CockroachDB es mas fuerte en consistencia distribuida y tolerancia a fallos por diseno.
-2. PostgreSQL mantiene ventaja en latencia local y flexibilidad, con costo de orquestacion mayor.
-3. Un enfoque hibrido CQRS (CockroachDB para comandos criticos + PostgreSQL para lecturas masivas) ofrece el mejor balance para la red social del proyecto.

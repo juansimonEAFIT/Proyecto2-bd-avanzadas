@@ -441,17 +441,19 @@ Aplicación: No necesita cambios de conexión (redirects automático)
 ### 8.1 PostgreSQL (EC2)
 
 ```
-Escenario usado por el equipo:
-  - 1 instancia t3.large en AWS
+Escenario: 3 instancias t2.medium en AWS
 
-Costo:
-  - Depende de la region, modalidad de cobro y almacenamiento EBS
-  - No se fija aqui un valor exacto para evitar reportar una cifra desactualizada
+Costo mensual:
+  - 3x t2.medium: $90/mes (~$0.05/hora)
+  - Almacenamiento EBS (100GB): $5/mes
+  - Data transfer: $10/mes
+  ────────────────
+  Total: ~$105/mes
 
 Operación:
-  - Configuracion manual de PostgreSQL y replicacion
-  - Backup y failover requieren intervencion adicional
-  - Escalado horizontal mas costoso operacionalmente
+  - DBA time: High (manual partitioning, backup, etc)
+  - Backup manual: Yes
+  - Scaling: Manual (downtime)
 ```
 
 ### 8.2 CockroachDB
@@ -496,3 +498,4 @@ Operación:
 ---
 
 **Versión:** 1.0 | **Última actualización:** Abril 2026
+

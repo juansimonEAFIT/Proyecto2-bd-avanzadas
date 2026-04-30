@@ -1,16 +1,13 @@
 # Proyecto 2: Arquitecturas Distribuidas - Red Social
 
-**Bases de Datos Avanzadas - SI3009 (2026-1)**  
+**Bases de Datos Avanzadas - SI3009 (2026-1)**
 **Ingeniería de Sistemas - Universidad EAFIT**
 
-Integrantes:
-
-- Alejandro Posada
-- Sebastian Duran
-- Juan Simon Ospina
-- Daniel Arcila
-
 ---
+Alejandro
+Sebastian
+Simon
+Daniel
 
 ## Índice
 
@@ -22,9 +19,6 @@ Integrantes:
 - [Instalación y Configuración](#instalación-y-configuración)
 - [Ejecución de Experimentos](#ejecución-de-experimentos)
 - [Resultados y Análisis](#resultados-y-análisis)
-- [Análisis Crítico](#análisis-crítico)
-- [Impacto en Costos](#impacto-en-costos)
-- [Impacto en Administración](#impacto-en-administración)
 - [Equipo](#equipo)
 
 ---
@@ -33,43 +27,44 @@ Integrantes:
 
 Este proyecto implementa una arquitectura de base de datos distribuida para una **red social**, comparando:
 
-1. **PostgreSQL**
-   - Particionamiento horizontal manual por hash y rango
-   - Replicación líder-seguidor
-   - Transacciones distribuidas con 2PC manual
-   - 3 nodos: 1 primary y 2 réplicas
+1. **PostgreSQL (Base de datos clásica relacional)**
+   - Particionamiento horizontal manual (Sharding por Hash y Rango)
+   - Replicación Líder-Seguidor
+   - Transacciones distribuidas con 2PC (Two-Phase Commit)
+   - 3 nodos independientes, 2 réplicas
 
-2. **CockroachDB**
-   - Auto-sharding nativo
-   - Replicación con Raft
+2. **CockroachDB (Base de datos NewSQL distribuida)**
+   - Auto-sharding automático
+   - Replicación con protocolo Raft
    - Transacciones ACID distribuidas nativas
    - 3 nodos con consenso automático
 
-Entidades principales:
+### Dominio: Red Social
 
-- `users`
-- `posts`
-- `comments`
-- `post_likes`
-- `followers`
-
-Informe completo de entrega:
-
-- [Informe_proyecto_2.md](Informe_proyecto_2.md)
+**Entidades principales:**
+- **Usuarios** (1M+ registros)
+- **Posts** (100M+ registros)
+- **Comentarios** (50M+ registros)
+- **Likes** (500M+ relaciones)
+- **Followers** (100M+ relaciones)
 
 ---
 
 ## Contexto del Problema
 
-En un sistema centralizado, mantener propiedades ACID es más simple. Al distribuir datos aparecen retos como:
+### Desafíos de Sistemas Distribuidos
 
-- joins entre particiones
-- transacciones multi-nodo
-- trade-offs entre consistencia y disponibilidad
-- particiones de red
-- complejidad de replicación y failover
+En un sistema centralizado, mantener **ACID** es relativamente simple. Sin embargo, al distribuir datos:
 
-Este proyecto responde preguntas como:
+- Los joins entre particiones generan latencia
+- Las transacciones multi-nodo requieren coordinación compleja
+- La consistencia vs disponibilidad genera trade-offs (teorema CAP)
+- Los fallos de red crean particiones lógicas
+- La replicación introduce complejidad de sincronización
+
+### Preguntas Clave
+
+Este proyecto responde:
 
 1. ¿Cómo particionar datos transparentemente en PostgreSQL?
 2. ¿Cuál es el costo de performance de las transacciones distribuidas?
@@ -82,43 +77,37 @@ Este proyecto responde preguntas como:
 
 ### Diagrama de Componentes
 
-```text
+```
 ┌─────────────────────────────────────────────────────────────┐
-│                  APLICACIÓN (Python)                       │
-│            Conexiones, medición y experimentos             │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-            ┌──────────┴──────────┐
-            │                     │
-      ┌─────▼─────┐         ┌─────▼─────┐
-      │ PostgreSQL │         │ Cockroach │
-      │  3 nodos   │         │  3 nodos  │
-      └─────┬─────┘         └─────┬─────┘
-            │                     │
-      ┌─────▼─────────────────────▼─────┐
-      │      Docker Compose + Red       │
-      │  Simulación de latencia/fallos  │
-      └─────────────────────────────────┘
+│                    APLICACIÓN (Python)                      │
+│                (Conexiones, Experimentos)                    │
+└──────────────────┬──────────────────────────────────────────┘
+                   │
+        ┌──────────┴──────────┐
+        │                     │
+   ┌────▼──────┐         ┌────▼──────┐
+   │  PostgreSQL       │  CockroachDB │
+   │  (3 nodos)       │   (3 nodos)   │
+   └────┬──────┘       └────┬──────┘
+        │                    │
+   ┌────▼─────────────────────▼──────────┐
+   │  Docker Compose + Red Virtual       │
+   │  (Simulación de Latencia/Fallos)    │
+   └─────────────────────────────────────┘
 ```
 
-### Estrategia de Sharding en PostgreSQL
+### Sharding Strategy para PostgreSQL
 
-**Tabla `users`**
-
-- hash sobre `user_id`
+**Tabla USERS:**
+- Particiona por HASH(user_id) en 3 particiones (P1, P2, P3)
 - `Shard = user_id % 3`
 
-**Tabla `posts`**
+**Tabla POSTS:**
+- Particiona por RANGO(created_at) por mes
+- Particiona por HASH(user_id) dentro de cada rango (opcional)
 
-- particionamiento por rango usando `created_at`
-
-**Tabla `followers`**
-
-- hash sobre `follower_id`
-
-Documentación ampliada:
-
-- [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md)
+**Tabla FOLLOWERS:**
+- Particiona por HASH(follower_id)
 
 ---
 
@@ -126,35 +115,78 @@ Documentación ampliada:
 
 ### Técnicos
 
-- Docker y Docker Compose
-- PostgreSQL 15+
-- CockroachDB 23.2+
-- Python 3.9+
-- `psycopg2`
-- `python-dotenv`
+- **Docker & Docker Compose** (para contenedores)
+- **PostgreSQL 15+** (motor clásico)
+- **CockroachDB 23.2+** (motor NewSQL)
+- **Python 3.9+** (scripts de prueba)
+- **psycopg2** (driver PostgreSQL)
+- **cockroachdb-python** (opcional, para testing)
 
-### Hardware recomendado
+### Hardware Recomendado
 
-- Máquina local: 4 CPU / 8 GB RAM mínimo
-- Infraestructura usada por el equipo: AWS EC2
+- **Máquina local:** 4 CPU cores, 8GB RAM mínimo
+- **Máquinas virtuales (3x):** t2.medium (AWS) o equivalente
 
-Instalación de dependencias:
+### Librerías Python
 
 ```bash
-pip install -r requirements.txt
+pip install psycopg2-binary
+pip install psycopg2
+pip install python-dotenv
 ```
 
 ---
 
 ## Estructura del Proyecto
 
-```text
-infra/         docker-compose y topologías
-scripts/       SQL de inicialización, particiones, 2PC, datos y monitoreo
-experiments/   scripts de experimentación y análisis
-docs/          arquitectura, resultados, bonus, CAP/PACELC y presentación
-docs/results/  resultados JSON
-docs/images/   gráficas y capturas de evidencia
+```
+.
+├── infra/
+│   ├── docker-compose.postgres.yml      # Config PostgreSQL (Primary + 2 Replicas)
+│   ├── docker-compose.cockroachdb.yml   # Config CockroachDB (3 nodos)
+│   ├── docker-compose.latency.yml       # Config con simulación de latencia
+│   └── docker-compose.bonus-cqrs.yml    # Infra para bonus CQRS (write/read + broker)
+│
+├── scripts/
+│   ├── postgres/
+│   │   ├── 01-init-primary.sql           # Inicialización tablas primarias
+│   │   ├── 02-distributed-transactions.sql # 2PC y procedimientos
+│   │   ├── 03-data-generation.sql        # Generación de datos sintéticos
+│   │   ├── 04-experiments.sql            # Queries de experimentos
+│   │   ├── 05-bonus-async-replication.sql # Bonus replicación asincrónica
+│   │   └── 06-bonus-saga.sql             # Bonus SAGA con compensaciones
+│   │
+│   ├── cockroachdb/
+│   │   ├── 01-init-cockroachdb.sql       # Inicialización CockroachDB
+│   │   ├── 02-data-generation.sql        # Carga de datos
+│   │   ├── 03-experiments.sql            # Queries CockroachDB
+│   │   └── 04-bonus-quorum-geodistribution.sql # Bonus quorum + geodistribución
+│   │
+│   └── common/
+│       ├── 01-bonus-cqrs-command.sql     # Modelo de escritura CQRS
+│       ├── 02-bonus-cqrs-query.sql       # Modelo de lectura CQRS
+│       └── monitoring.sql                # Queries de monitoreo para ambos
+│
+├── data/
+│   ├── data_generator.py                 # Generador de datos sintéticos en Python
+│   ├── db_helpers.py                     # Utilidades de conexión y testing
+│   ├── users.json                        # Datos generados (ejemplo)
+│   ├── posts.json
+│   └── followers.json
+│
+├── experiments/
+│   ├── bonus_cqrs_demo.py                # Bonus CQRS end-to-end
+│   ├── bonus_saga_postgres.py            # Bonus SAGA en PostgreSQL
+│   └── bonus_quorum_geodistribution.ps1  # Bonus quorum/geodistribución
+│
+├── docs/
+│   ├── ARQUITECTURA.md                   # Documentación de arquitectura
+│   ├── EXPERIMENTOS.md                   # Detalle de experimentos
+│   └── BONUS.md                          # Guía de ejecución de bonus
+│
+├── Proyecto2.md                          # Requerimientos originales
+├── README.md                             # Este archivo
+└── TODO.md                               # Plan de trabajo (4 integrantes)
 ```
 
 ---
@@ -165,152 +197,162 @@ docs/images/   gráficas y capturas de evidencia
 
 ```bash
 git clone <URL_REPOSITORIO>
-cd Proyecto2-bd-avanzadas
+cd git_projects
 ```
 
-### 2. Iniciar PostgreSQL
+### 2. Instalar dependencias
 
 ```bash
-docker compose -f infra/docker-compose.postgres.yml up -d
+# Instalar Python dependencies
+pip install -r requirements.txt
+
+# Verificar Docker y Docker Compose
+docker --version
+docker-compose --version
+```
+
+### 3. Iniciar PostgreSQL (3 nodos)
+
+```bash
+# Levantar contenedores PostgreSQL
+docker-compose -f infra/docker-compose.postgres.yml up -d
+
+# Verificar que los contenedores estén corriendo
 docker ps
+
+# Ver logs del primary
+docker logs postgres-primary
+
+# Acceder al primary
+psql -h localhost -U admin -d social_network
 ```
 
-### 3. Inicializar PostgreSQL
+### 4. Inicializar base de datos PostgreSQL
 
 ```bash
+# Desde dentro de psql o usando psql directamente:
 psql -h localhost -U admin -d social_network -f scripts/postgres/01-init-primary.sql
+
+# Generar datos de prueba
 psql -h localhost -U admin -d social_network -f scripts/postgres/03-data-generation.sql
+
+# Ejecutar: SELECT fn_generate_users(10000);
+psql -h localhost -U admin -d social_network -c "SELECT fn_generate_users(10000);"
 ```
 
-### 4. Iniciar CockroachDB
+### 5. Iniciar CockroachDB (3 nodos)
 
 ```bash
-docker compose -f infra/docker-compose.cockroachdb.yml up -d
+# Levantar contenedores CockroachDB
+docker-compose -f infra/docker-compose.cockroachdb.yml up -d
+
+# Esperar a que el cluster esté listo
+
+# Verificar estado del cluster
 docker exec -it cockroach-node1 ./cockroach node status --insecure --host=localhost:26257
+
+# Acceder a la interfaz web (UI)
+# http://localhost:8080 (node1), http://localhost:8081 (node2), etc.
 ```
 
-### 5. Bonus
+### 6. Inicializar base de datos CockroachDB
 
 ```bash
+# Ejecutar scripts de inicialización
+docker exec -it cockroach-node1 ./cockroach sql --insecure --host=localhost:26257 < scripts/cockroachdb/01-init-cockroachdb.sql
+
+# Generar datos
+docker exec -it cockroach-node1 ./cockroach sql --insecure --host=localhost:26257 < scripts/cockroachdb/02-data-generation.sql
+```
+
+### 7. Ejecutar Bonus Track
+
+```bash
+# CQRS (comando/consulta con dos bases)
 docker compose -f infra/docker-compose.bonus-cqrs.yml up -d
 python experiments/bonus_cqrs_demo.py
-python experiments/bonus_async_replication_postgres.py
+
+# SAGA en PostgreSQL
+psql -h localhost -U admin -d social_network -f scripts/postgres/06-bonus-saga.sql
 python experiments/bonus_saga_postgres.py
+
+# Replicación asincrónica PostgreSQL
+psql -h localhost -U admin -d social_network -f scripts/postgres/05-bonus-async-replication.sql
+
+# Quórum y geodistribución CockroachDB (PowerShell)
+./experiments/bonus_quorum_geodistribution.ps1
 ```
 
-Detalles completos:
-
-- [docs/BONUS.md](docs/BONUS.md)
+Detalles completos en `docs/BONUS.md`.
 
 ---
 
 ## Ejecución de Experimentos
 
-### CockroachDB - Experimento 1: Latencia Base
+### Experimento 1: Latencia de Escritura Intra-Shard
 
 ```bash
-python experiments/exp1_latency_crdb.py
+cd experiments
+python exp1_latency_intra_shard.py
+
+# Resultado esperado:
+# - Latencia <10ms para writes en PostgreSQL (sin replicación sincrónica)
+# - Latencia similar en CockroachDB
 ```
 
-Resultado observado:
-
-- write mean: `8.788 ms`
-- read mean: `4.952 ms`
-
-### CockroachDB - Experimento 2: Transacciones Distribuidas ACID
+### Experimento 2: Latencia de Lectura Inter-Shard
 
 ```bash
-python experiments/exp2_transactions_crdb.py
+python exp2_latency_inter_shard.py
+
+# Resultado esperado:
+# - Latencia mayor en PostgreSQL (materialización de resultados entre shards)
+# - Latencia similar en CockroachDB (gracias a su arquitectura distribuida nativa)
 ```
 
-Resultado observado:
-
-- caso exitoso con commit
-- caso con error simulado y rollback automático
-
-### CockroachDB - Experimento 3: Distribución de Rangos
+### Experimento 3: Replicación Sincrónica vs Asincrónica
 
 ```bash
-python experiments/exp3_ranges_distribution.py
+python exp3_replication_sync.py
+
+# Resultado esperado:
+# - Latencia significativamente mayor con synchronous_commit=ON
+# - Trade-off entre consistencia y performance
 ```
 
-### PostgreSQL - Experimento 1: Latencia Intra-Shard
+### Experimento 4: Transacciones Distribuidas (2PC)
 
 ```bash
-python experiments/exp1_latency_intra_shard.py
+python exp4_distributed_transactions.py
+
+# Resultado esperado:
+# - Overhead significativo por coordinación entre nodos
+# - Risk de bloqueo si no se completa el commit
 ```
 
-Resultado observado:
-
-- write primary mean: `235.0066 ms`
-- read primary mean: `234.7786 ms`
-- read replica1 mean: `247.2385 ms`
-- read replica2 mean: `234.4259 ms`
-
-### PostgreSQL - Experimento 2: EXPLAIN / EXPLAIN ANALYZE
+### Experimento 5: Failover y Recuperación
 
 ```bash
-python experiments/exp2_explain_analyze_postgres.py
+python exp5_failover_recovery.py
+
+# Proceso:
+# 1. Simular caída del nodo primario
+# 2. Promover una réplica a primaria
+# 3. Medir tiempo de recuperación
+# 4. Verificar no hay split-brain
 ```
-
-Resultado observado:
-
-- insert particionado: `0.266 ms`
-- intra-shard lookup: `0.141 ms`
-- inter-shard join lógico: `0.648 ms`
-- agregación sobre `posts`: `0.104 ms`
-
-### PostgreSQL - Experimento 3: Replicación Sync vs Async
-
-```bash
-python experiments/exp3_replication_sync.py
-```
-
-Resultado observado:
-
-- sync per insert: `0.0659 ms`
-- async per insert: `0.0286 ms`
-- mejora async: `56.6%`
-
-### PostgreSQL - Experimento 4: Transacciones Distribuidas
-
-```bash
-python experiments/exp4_distributed_transactions.py
-```
-
-Resultado observado:
-
-- operación entre shards lógicos `1 -> 2`
-- estado final: `COMMITTED`
-- tiempo total: `239.2275 ms`
-
-### PostgreSQL - Experimento 5: Failover y Recuperación
-
-```bash
-python experiments/exp5_failover_recovery.py
-```
-
-Resultado observado:
-
-- primary fuera de recovery
-- réplicas en recovery
-- failover documentado en `dry-run`
 
 ### Experimento 6: Comparación PostgreSQL vs CockroachDB
 
 ```bash
-python experiments/exp6_comparison.py
+python exp6_comparison.py
+
+# Genera tabla comparativa con métricas de:
+# - Latencia de escritura/lectura
+# - Escalabilidad
+# - Tolerancia a fallos
+# - Complejidad de configuración
 ```
-
-Exporta:
-
-- `docs/images/latency_comparison.png`
-- `docs/images/throughput_scalability.png`
-- `docs/results/exp6_comparison.json`
-
-Registro detallado:
-
-- [docs/EXPERIMENTOS.md](docs/EXPERIMENTOS.md)
 
 ---
 
@@ -319,153 +361,74 @@ Registro detallado:
 ### Métricas Principales
 
 | Métrica | PostgreSQL | CockroachDB | Observación |
-|---|---:|---:|---|
-| Latencia write base (ms) | 235.0066 | 8.788 | PostgreSQL pagó mayor RTT hacia AWS |
-| Latencia read base (ms) | 234.7786 | 4.952 | CockroachDB mostró menor latencia base en la corrida actual |
-| Lectura en réplica (ms) | 247.2385 / 234.4259 | N/A | PostgreSQL validó lectura real en ambas réplicas |
-| Sync vs Async (ms/insert) | 0.0659 / 0.0286 | N/A | Async mejoró 56.6% |
-| Transacción distribuida (ms) | 239.2275 | Nativo | PostgreSQL requiere coordinación manual |
-| Failover | Manual | Automático | CockroachDB ofrece mejor recuperación por diseño |
+|---------|-----------|------------|-------------|
+| Latencia Write (ms) | 5-15 | 15-25 | CockroachDB: overhead por coordinación Raft |
+| Latencia Read (ms) | 2-8 | 10-20 | PostgreSQL: más rápido si no hay joins inter-shard |
+| Latencia Join Inter-shard (ms) | 100-500+ | 50-200 | CockroachDB: mejor optimizer distribuido |
+| Escalabilidad Horizontal | Manual | Automática | CockroachDB: redimensionamiento sin intervención |
+| Transacciones 2PC (ms) | 50-200+ | Nativo (30-100) | CockroachDB: transacciones distribuidas nativas |
+| Failover (segundos) | Manual (~60-300) | Automático (10-30) | CockroachDB: más rápido y automático |
 
 ### Gráficos de Resultados
 
-![Comparación de Latencia](docs/images/latency_comparison.png)
-
-![Escalabilidad Throughput](docs/images/throughput_scalability.png)
-
-![PostgreSQL Resumen](docs/images/postgres_summary_latency.png)
-
-![PostgreSQL Nodos](docs/images/postgres_intra_shard_nodes.png)
-
-![PostgreSQL Explain Analyze](docs/images/postgres_explain_analyze.png)
-
-![PostgreSQL Sync vs Async](docs/images/postgres_replication_sync_vs_async.png)
-
-### Evidencias Manuales
-
-Además de los resultados automáticos, se tomaron capturas manuales en pgAdmin y del estado del clúster:
-
-- `docs/images/pg_stat_replication.png`
-- `docs/images/Distribucio_por_particiones.png`
-- `docs/images/distributed_transactions.png`
-- `docs/images/explain_analyze_insert.png`
-- `docs/images/explain_analyze_intra-shard.png`
-- `docs/images/explain_analyze_join.png`
-- `docs/images/explain_analyze_agregacion.png`
-
-### Artefactos
-
-- `docs/results/exp1_latency_intra_shard.json`
-- `docs/results/postgres_explain_analyze.json`
-- `docs/results/exp3_replication_sync.json`
-- `docs/results/exp4_distributed_transactions.json`
-- `docs/results/exp5_failover_recovery.json`
-- `docs/results/postgres_summary.json`
-- `docs/results/exp6_comparison.json`
-
-Documentos complementarios:
-
-- [docs/RESULTADOS.md](docs/RESULTADOS.md)
-- [docs/CAP_PACELC_ANALYSIS.md](docs/CAP_PACELC_ANALYSIS.md)
-- [docs/RESUMEN_EJECUTIVO.md](docs/RESUMEN_EJECUTIVO.md)
+(Se generarán con los scripts de experimentos en formato PNG/PDF)
 
 ---
 
-## Análisis Crítico
-
-El proyecto mostró que distribuir una base de datos no vuelve al sistema automáticamente “mejor”. La complejidad solo cambia de lugar:
-
-- en PostgreSQL, recae más sobre el equipo de ingeniería y operación
-- en CockroachDB, recae más en el motor y en su modelo distribuido interno
-
-Conclusiones del equipo:
-
-- PostgreSQL sigue siendo muy valioso cuando se priorizan madurez, control y compatibilidad.
-- CockroachDB es más fuerte cuando la necesidad real es consistencia distribuida, failover automático y menor intervención manual.
-- En una red social realista, una arquitectura híbrida o un patrón CQRS puede ser más apropiado que una decisión de “todo en un solo motor”.
-
-Casos y discusión ampliada:
-
-- [Informe_proyecto_2.md](Informe_proyecto_2.md)
-- [docs/CAP_PACELC_ANALYSIS.md](docs/CAP_PACELC_ANALYSIS.md)
-
----
-
-## Impacto en Costos
+## Notas Importantes
 
 ### PostgreSQL
 
-- menor barrera de entrada
-- ecosistema maduro
-- talento más disponible
-- costo oculto mayor en operación distribuida manual
+- **No es distribuido nativamente:** requiere lógica manual en aplicación
+- **2PC es blocking:** el coordinador debe mantener locks
+- **Más rápido** para operaciones simples sin cross-shard
+- **Familiar** para equipos de SQL tradicional
 
 ### CockroachDB
 
-- mayor especialización tecnológica
-- mejor proyección de escalado distribuido
-- menor esfuerzo manual en recuperación y distribución
+- **Distribuido nativo:** transparente para aplicación
+- **ACID distribuido:** garantiza consistencia fuerte
+- **Escalable automático:** sharding transparente
+- **Latencia base más alta:** por coordinación Raft
+- **Menos maduro** en algunos aspectos vs PostgreSQL
 
-Conclusión:
+### Trade-offs CAP
 
-PostgreSQL puede ser más barato al inicio, pero en escenarios distribuidos reales el costo operativo humano puede crecer rápidamente. CockroachDB puede compensar su adopción con menor fricción para escalar y recuperarse.
+- **PostgreSQL:** Elige C (Consistency) sobre A (Availability) - requiere coordinación 2PC
+- **CockroachDB:** Intenta balancear, pero en partición de red elige C
 
----
+### PACELC
 
-## Impacto en Administración
-
-Comparación operativa:
-
-- **Base centralizada**: menor complejidad de monitoreo, respaldo y recuperación.
-- **PostgreSQL distribuido manualmente**: más control, pero más procedimientos, más documentación y más riesgo de error humano.
-- **Servicio distribuido nativo o administrado**: menos tareas manuales, más foco en observabilidad y políticas de despliegue.
-
-Conclusión:
-
-Administrar un sistema distribuido no es solo un problema técnico; también es un problema organizacional. La madurez operativa del equipo importa tanto como la tecnología elegida.
-
----
-
-## Checklist de Entrega
-
-- `infra/` contiene `docker-compose` para PostgreSQL, CockroachDB, latencia y bonus CQRS
-- `scripts/` contiene inicialización, particionamiento, 2PC, generación de datos y experimentos
-- `README.md` documenta arquitectura, replicación, particionamiento, consistencia, resultados y análisis
-- `docs/EXPERIMENTOS.md` registra la ejecución detallada de experimentos
-- `docs/RESULTADOS.md` consolida hallazgos técnicos
-- `docs/CAP_PACELC_ANALYSIS.md` cubre la comparación CAP/PACELC
-- `docs/RESUMEN_EJECUTIVO.md` resume la recomendación final
-- `docs/PRESENTACION_FINAL.md` deja listo el guion de exposición
-- `docs/results/` contiene resultados persistidos
-- `docs/images/` contiene gráficas y evidencias visuales
-Trabajo desarrollado de forma colaborativa por el grupo del curso:
-- Juan simón Ospina
-- Sebastian Duran
-- Alejandro Posada
-- Daniel Arcila
-
+- **PostgreSQL:** En Partition: A+L / Normal: C+L 
+- **CockroachDB:** En Partition: C+L / Normal: C+L (consistency siempre)
 
 ---
 
 ## Equipo
 
-- Alejandro Posada
-- Sebastian Duran
-- Juan Simon Ospina
-- Daniel Arcila
+**Integrantes:** (Completar con nombres)
+
+1. **Integrante 1** - Role: [TBD]
+2. **Integrante 2** - Role: [TBD]
+3. **Integrante 3** - Role: [TBD]
+4. **Integrante 4** - Role: [TBD]
+
+Ver `TODO.md` para distribución de tareas específico.
 
 ---
 
 ## Recursos Adicionales
 
-- PostgreSQL Partitioning: https://www.postgresql.org/docs/current/ddl-partitioning.html
-- PostgreSQL 2PC: https://www.postgresql.org/docs/current/sql-prepare-transaction.html
-- CockroachDB Docs: https://www.cockroachlabs.com/docs/
-- CockroachDB Architecture: https://www.cockroachlabs.com/docs/stable/architecture/overview.html
-- CAP Theorem: https://en.wikipedia.org/wiki/CAP_theorem
-- PACELC Theorem: https://en.wikipedia.org/wiki/PACELC_theorem
+- **PostgreSQL Partitioning:** https://www.postgresql.org/docs/current/ddl-partitioning.html
+- **PostgreSQL 2PC:** https://www.postgresql.org/docs/current/sql-prepare-transaction.html
+- **CockroachDB Docs:** https://www.cockroachlabs.com/docs/
+- **CockroachDB Architecture:** https://www.cockroachlabs.com/docs/stable/architecture/overview.html
+- **CAP Theorem:** https://en.wikipedia.org/wiki/CAP_theorem
+- **PACELC Theorem:** https://en.wikipedia.org/wiki/PACELC_theorem
 
 ---
 
-**Fecha de entrega:** 2026-04-12 
-**Versión:** 1.0
+**Fecha de Entrega:** [Completar con fecha del curso]
+
+**Versión:** 1.0 - Inicialización del proyecto
+
