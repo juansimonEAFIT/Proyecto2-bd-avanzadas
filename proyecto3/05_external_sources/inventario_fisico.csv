@@ -1,0 +1,52 @@
+FechaConteo,CodigoSKU,NombreTienda,StockContado,StockSistema,Diferencia,Observacion
+2025-01-31,SKU-0001,RetailPro Medellín Centro,145,150,-5,Diferencia menor por merma
+2025-01-31,SKU-0002,RetailPro Medellín Centro,88,88,0,OK
+2025-01-31,SKU-0003,RetailPro Medellín Centro,210,215,-5,Producto dañado en bodega
+2025-01-31,SKU-0004,RetailPro Medellín Centro,65,65,0,OK
+2025-01-31,SKU-0005,RetailPro Medellín Centro,302,300,2,Ajuste positivo por recepción tardía
+2025-01-31,SKU-0006,RetailPro Medellín Centro,75,80,-5,Robo o pérdida
+2025-01-31,SKU-0007,RetailPro Medellín Centro,198,198,0,OK
+2025-01-31,SKU-0008,RetailPro Medellín Centro,55,55,0,OK
+2025-01-31,SKU-0009,RetailPro Medellín Centro,120,125,-5,Merma por vencimiento
+2025-01-31,SKU-0010,RetailPro Medellín Centro,410,410,0,OK
+2025-01-31,SKU-0001,RetailPro Bogotá Chapinero,160,158,2,Ajuste por transferencia no registrada
+2025-01-31,SKU-0002,RetailPro Bogotá Chapinero,95,95,0,OK
+2025-01-31,SKU-0003,RetailPro Bogotá Chapinero,230,235,-5,Diferencia menor
+2025-01-31,SKU-0004,RetailPro Bogotá Chapinero,72,72,0,OK
+2025-01-31,SKU-0005,RetailPro Bogotá Chapinero,315,315,0,OK
+2025-01-31,SKU-0006,RetailPro Bogotá Chapinero,83,85,-2,Merma
+2025-01-31,SKU-0007,RetailPro Bogotá Chapinero,205,205,0,OK
+2025-01-31,SKU-0008,RetailPro Bogotá Chapinero,60,60,0,OK
+2025-01-31,SKU-0009,RetailPro Bogotá Chapinero,130,130,0,OK
+2025-01-31,SKU-0010,RetailPro Bogotá Chapinero,425,420,5,Exceso no explicado
+2025-01-31,SKU-0001,RetailPro Cali Norte,110,115,-5,Robo hormiga
+2025-01-31,SKU-0002,RetailPro Cali Norte,70,70,0,OK
+2025-01-31,SKU-0003,RetailPro Cali Norte,185,185,0,OK
+2025-01-31,SKU-0004,RetailPro Cali Norte,50,52,-2,Diferencia menor
+2025-01-31,SKU-0005,RetailPro Cali Norte,260,260,0,OK
+2025-01-31,SKU-0011,RetailPro Medellín Centro,78,78,0,OK
+2025-01-31,SKU-0012,RetailPro Medellín Centro,145,148,-3,Merma
+2025-01-31,SKU-0013,RetailPro Medellín Centro,92,92,0,OK
+2025-01-31,SKU-0014,RetailPro Bogotá Chapinero,200,200,0,OK
+2025-01-31,SKU-0015,RetailPro Bogotá Chapinero,67,70,-3,Diferencia por devolución no registrada
+2025-04-30,SKU-0001,RetailPro Medellín Centro,132,135,-3,Merma normal
+2025-04-30,SKU-0002,RetailPro Medellín Centro,91,91,0,OK
+2025-04-30,SKU-0003,RetailPro Medellín Centro,205,205,0,OK
+2025-04-30,SKU-0005,RetailPro Medellín Centro,288,290,-2,Ajuste menor
+2025-04-30,SKU-0001,RetailPro Bogotá Chapinero,155,155,0,OK
+2025-04-30,SKU-0002,RetailPro Bogotá Chapinero,98,100,-2,Merma
+2025-04-30,SKU-0006,RetailPro Barranquilla,42,45,-3,Producto dañado en transporte
+2025-04-30,SKU-0007,RetailPro Barranquilla,180,180,0,OK
+2025-04-30,SKU-0008,RetailPro Barranquilla,55,55,0,OK
+2025-04-30,SKU-0009,RetailPro Cartagena,118,120,-2,Merma normal
+2025-04-30,SKU-0010,RetailPro Cartagena,395,395,0,OK
+2025-04-30,SKU-0011,RetailPro Pereira,65,65,0,OK
+2025-04-30,SKU-0012,RetailPro Pereira,140,142,-2,Merma
+2025-04-30,SKU-0013,RetailPro Bucaramanga,88,88,0,OK
+2025-04-30,SKU-0014,RetailPro Bucaramanga,195,198,-3,Diferencia menor
+2025-04-30,SKU-0015,RetailPro Medellín Laureles,62,62,0,OK
+2025-04-30,SKU-0016,RetailPro Medellín Laureles,148,150,-2,Merma
+2025-04-30,SKU-0017,RetailPro Bogotá Usaquén,99,99,0,OK
+2025-04-30,SKU-0018,RetailPro Bogotá Usaquén,212,215,-3,Producto dañado
+2025-04-30,SKU-0019,RetailPro Manizales,55,55,0,OK
+2025-04-30,SKU-0020,RetailPro Manizales,167,167,0,OK

@@ -1,0 +1,86 @@
+Anio,Mes,NombreTienda,NombreCategoria,ValorMeta
+2023,1,RetailPro Medellín Centro,Electrónica,85000000
+2023,1,RetailPro Medellín Centro,Ropa y Calzado,62000000
+2023,1,RetailPro Medellín Centro,Alimentos,45000000
+2023,1,RetailPro Bogotá Chapinero,Electrónica,92000000
+2023,1,RetailPro Bogotá Chapinero,Ropa y Calzado,70000000
+2023,1,RetailPro Bogotá Chapinero,Hogar y Deco,38000000
+2023,1,RetailPro Cali Norte,Electrónica,68000000
+2023,1,RetailPro Cali Norte,Alimentos,52000000
+2023,1,RetailPro Barranquilla,Electrónica,74000000
+2023,1,RetailPro Barranquilla,Deportes,41000000
+2023,2,RetailPro Medellín Centro,Electrónica,88000000
+2023,2,RetailPro Medellín Centro,Ropa y Calzado,64000000
+2023,2,RetailPro Bogotá Chapinero,Electrónica,95000000
+2023,2,RetailPro Bogotá Chapinero,Hogar y Deco,40000000
+2023,2,RetailPro Cali Norte,Electrónica,71000000
+2023,2,RetailPro Barranquilla,Electrónica,77000000
+2023,3,RetailPro Medellín Centro,Electrónica,90000000
+2023,3,RetailPro Medellín Centro,Ropa y Calzado,66000000
+2023,3,RetailPro Bogotá Chapinero,Electrónica,98000000
+2023,3,RetailPro Cali Norte,Alimentos,55000000
+2023,4,RetailPro Medellín Centro,Electrónica,87000000
+2023,4,RetailPro Bogotá Chapinero,Electrónica,93000000
+2023,5,RetailPro Medellín Centro,Electrónica,91000000
+2023,5,RetailPro Bogotá Chapinero,Electrónica,99000000
+2023,6,RetailPro Medellín Centro,Electrónica,89000000
+2023,6,RetailPro Cali Norte,Electrónica,73000000
+2023,7,RetailPro Medellín Centro,Electrónica,86000000
+2023,7,RetailPro Bogotá Chapinero,Electrónica,94000000
+2023,8,RetailPro Medellín Centro,Electrónica,88000000
+2023,8,RetailPro Barranquilla,Electrónica,79000000
+2023,9,RetailPro Medellín Centro,Electrónica,92000000
+2023,9,RetailPro Bogotá Chapinero,Ropa y Calzado,75000000
+2023,10,RetailPro Medellín Centro,Electrónica,95000000
+2023,10,RetailPro Cali Norte,Electrónica,76000000
+2023,11,RetailPro Medellín Centro,Electrónica,125000000
+2023,11,RetailPro Bogotá Chapinero,Electrónica,135000000
+2023,11,RetailPro Cali Norte,Electrónica,98000000
+2023,11,RetailPro Barranquilla,Electrónica,108000000
+2023,12,RetailPro Medellín Centro,Electrónica,140000000
+2023,12,RetailPro Medellín Centro,Ropa y Calzado,110000000
+2023,12,RetailPro Bogotá Chapinero,Electrónica,155000000
+2023,12,RetailPro Bogotá Chapinero,Juguetería,88000000
+2023,12,RetailPro Cali Norte,Electrónica,112000000
+2023,12,RetailPro Barranquilla,Electrónica,120000000
+2024,1,RetailPro Medellín Centro,Electrónica,90000000
+2024,1,RetailPro Bogotá Chapinero,Electrónica,98000000
+2024,1,RetailPro Cali Norte,Electrónica,72000000
+2024,1,RetailPro Barranquilla,Electrónica,78000000
+2024,2,RetailPro Medellín Centro,Electrónica,93000000
+2024,2,RetailPro Bogotá Chapinero,Electrónica,102000000
+2024,3,RetailPro Medellín Centro,Electrónica,95000000
+2024,3,RetailPro Bogotá Chapinero,Electrónica,105000000
+2024,4,RetailPro Medellín Centro,Electrónica,92000000
+2024,4,RetailPro Bogotá Chapinero,Hogar y Deco,48000000
+2024,5,RetailPro Medellín Centro,Electrónica,96000000
+2024,5,RetailPro Bogotá Chapinero,Electrónica,108000000
+2024,6,RetailPro Medellín Centro,Deportes,55000000
+2024,6,RetailPro Cali Norte,Deportes,42000000
+2024,7,RetailPro Medellín Centro,Electrónica,94000000
+2024,7,RetailPro Bogotá Chapinero,Electrónica,106000000
+2024,8,RetailPro Medellín Centro,Electrónica,97000000
+2024,8,RetailPro Barranquilla,Alimentos,62000000
+2024,9,RetailPro Medellín Centro,Ropa y Calzado,80000000
+2024,9,RetailPro Bogotá Chapinero,Ropa y Calzado,90000000
+2024,10,RetailPro Medellín Centro,Electrónica,100000000
+2024,10,RetailPro Cali Norte,Electrónica,80000000
+2024,11,RetailPro Medellín Centro,Electrónica,135000000
+2024,11,RetailPro Bogotá Chapinero,Electrónica,148000000
+2024,11,RetailPro Cali Norte,Electrónica,105000000
+2024,11,RetailPro Barranquilla,Electrónica,115000000
+2024,11,RetailPro Cartagena,Electrónica,82000000
+2024,12,RetailPro Medellín Centro,Electrónica,155000000
+2024,12,RetailPro Bogotá Chapinero,Electrónica,170000000
+2024,12,RetailPro Cali Norte,Electrónica,122000000
+2024,12,RetailPro Barranquilla,Electrónica,132000000
+2025,1,RetailPro Medellín Centro,Electrónica,95000000
+2025,1,RetailPro Bogotá Chapinero,Electrónica,105000000
+2025,2,RetailPro Medellín Centro,Electrónica,98000000
+2025,2,RetailPro Bogotá Chapinero,Electrónica,109000000
+2025,3,RetailPro Medellín Centro,Electrónica,100000000
+2025,3,RetailPro Cali Norte,Electrónica,82000000
+2025,4,RetailPro Medellín Centro,Electrónica,97000000
+2025,4,RetailPro Bogotá Chapinero,Electrónica,111000000
+2025,5,RetailPro Medellín Centro,Electrónica,102000000
+2025,6,RetailPro Medellín Centro,Deportes,60000000
