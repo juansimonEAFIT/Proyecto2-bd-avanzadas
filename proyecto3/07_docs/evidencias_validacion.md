@@ -14,6 +14,9 @@ Este documento contiene los resultados obtenidos tras la ejecución del pipeline
 | STG_Inventario | Validacion Stock Negativo + Integridad Referencial | 109500 | 109500 | 0 | 0.00% | Stock negativo marcado como SOSPECHOSO; productos sin referencia como RECHAZADO |
 | STG_MetasExternas | Validacion ValorMeta y Mes | 85 | 85 | 0 | 0.00% | Metas con valor <= 0 o mes inválido rechazadas |
 
+### Evidencia Visual (QA_Reporte en SSMS)
+![Evidencia de Calidad de Datos Staging](../imagenes/sebastian/evidencia_staging_qa.png)
+
 
 ## 2. Conteos de Dimensiones en el Data Warehouse (RetailDW)
 
@@ -43,4 +46,7 @@ Este documento contiene los resultados obtenidos tras la ejecución del pipeline
 | CargarDimProveedor | COMPLETADO | 20 | 20 | 0 | 0s | Ninguno |
 | CargarDimCanalVenta | COMPLETADO | 5 | 5 | 0 | 0s | Ninguno |
 | CargarDimPromocion | COMPLETADO | 12 | 12 | 0 | 0s | Ninguno |
+
+### Evidencia Visual (ETL_Log en SSMS)
+![Evidencia de Carga de Dimensiones DW](../imagenes/sebastian/evidencia_dw_etl.png)
 
