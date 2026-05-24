@@ -5,7 +5,7 @@
 
 ---
 
-## 👥 Integrantes
+## Integrantes
 
 | # | Nombre | Responsabilidad Principal |
 |---|--------|--------------------------|
@@ -16,7 +16,7 @@
 
 ---
 
-## 📋 Descripción del Proyecto
+## Descripción del Proyecto
 
 Solución completa de **Business Intelligence** para una empresa minorista con múltiples sedes en Colombia. El proyecto implementa un pipeline end-to-end desde datos transaccionales OLTP hasta dashboards ejecutivos en Power BI, desplegado en Azure.
 
@@ -29,7 +29,7 @@ Solución completa de **Business Intelligence** para una empresa minorista con m
 
 ---
 
-## 🏗️ Arquitectura General
+## Arquitectura General
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -53,32 +53,32 @@ Solución completa de **Business Intelligence** para una empresa minorista con m
 
 ---
 
-## 📁 Estructura del Repositorio
+## Estructura del Repositorio
 
 ```
 proyecto3/
-├── 📄 README.md                         ← Este archivo
-├── 📄 TODO.md                           ← Tareas distribuidas por persona
-├── 📄 PROYECTO3.md                      ← Enunciado original del profesor
+├── README.md                         ← Este archivo
+├── TODO.md                           ← Tareas distribuidas por persona
+├── PROYECTO3.md                      ← Enunciado original del profesor
 │
-├── 📂 01_oltp/                          ← Base de datos transaccional
+├── 01_oltp/                          ← Base de datos transaccional
 │   ├── 01_create_database.sql           ← Crear BD RetailOLTP
 │   ├── 02_create_tables.sql             ← 13+ tablas OLTP normalizadas
 │   ├── 03_generate_data.sql             ← Datos sintéticos (50K ventas)
 │   └── 04_generate_data_restante.sql    ← Completar generación de datos
 │
-├── 📂 02_staging/                       ← Zona de integración intermedia
+├── 02_staging/                       ← Zona de integración intermedia
 │   ├── 01_create_staging.sql            ← Crear BD BI_Staging
 │   ├── 02_load_staging.sql              ← Cargar OLTP → Staging + CSV
 │   └── 03_quality_checks.sql           ← Limpieza y validaciones
 │
-├── 📂 03_datawarehouse/                 ← Modelo dimensional (estrella)
+├── 03_datawarehouse/                 ← Modelo dimensional (estrella)
 │   ├── 01_create_dw_database.sql        ← Crear BD RetailDW
 │   ├── 02_create_dimensions.sql         ← 9 dimensiones
 │   ├── 03_create_facts.sql              ← 4 tablas de hechos
 │   └── 04_etl_log.sql                  ← Tabla ETL_Log
 │
-├── 📂 04_etl/                           ← Procedimientos ETL en T-SQL
+├── 04_etl/                           ← Procedimientos ETL en T-SQL
 │   ├── 00_ETL_Master.sql                ← Orquestador principal
 │   ├── 01_CargarDimFecha.sql            ← ETL de la dimensión Fecha
 │   ├── 02_CargarDimensiones.sql         ← ETL consolidado de todas las dimensiones (Cliente, Producto, etc.)
@@ -88,22 +88,22 @@ proyecto3/
 │   ├── 13_CargarFactDevoluciones.sql
 │   └── 14_ValidarCalidadDatos.sql
 │
-├── 📂 05_external_sources/              ← Fuentes externas (CSV/Excel)
+├── 05_external_sources/              ← Fuentes externas (CSV/Excel)
 │   ├── metas_mensuales.csv              ← Metas por tienda/categoría
 │   ├── inventario_fisico.csv            ← Ajustes manuales inventario
 │   └── README_import.md                 ← Instrucciones de importación
 │
-├── 📂 06_powerbi/                       ← Archivos Power BI
+├── 06_powerbi/                       ← Archivos Power BI
 │   ├── RetailBI.pbix                    ← [Agregar tras construir]
 │   ├── medidas_dax.md                   ← Todas las medidas DAX
 │   └── README_powerbi.md               ← Instrucciones de conexión
 │
-└── 📂 07_docs/                          ← Documentación técnica
+└── 07_docs/                          ← Documentación técnica
     ├── diccionario_datos.md             ← Diccionario de todas las tablas
     ├── modelo_dimensional.md            ← Diagrama y descripción del DW
     └── justificacion_modelo.md         ← Respuestas a preguntas del profesor
 │
-└── 📂 08_scripts/                       ← Scripts de apoyo y utilidades
+└── 08_scripts/                       ← Scripts de apoyo y utilidades
     ├── load_csvs.py                     ← Carga de CSV a BD
     ├── .env                             ← Credenciales
     └── requirements.txt                 ← Dependencias Python
@@ -111,7 +111,7 @@ proyecto3/
 
 ---
 
-## ⚙️ Prerrequisitos
+## Prerrequisitos
 
 | Herramienta | Versión | Uso |
 |-------------|---------|-----|
@@ -123,7 +123,7 @@ proyecto3/
 
 ---
 
-## 🚀 Instrucciones de Ejecución
+## Instrucciones de Ejecución
 
 ### Paso 1 — Configurar la instancia SQL Server en AWS RDS *(Persona 1)*
 
@@ -180,7 +180,7 @@ Ver **`06_powerbi/README_powerbi.md`** para instrucciones completas.
 
 ---
 
-## 🌐 Acceso al Servidor (completar tras deploy)
+## Acceso al Servidor (completar tras deploy)
 
 | Campo | Valor |
 |-------|-------|
@@ -192,7 +192,7 @@ Ver **`06_powerbi/README_powerbi.md`** para instrucciones completas.
 
 ---
 
-## 📊 Modelo Dimensional — Resumen
+## Modelo Dimensional — Resumen
 
 ### Dimensiones (9)
 | Dimensión | Descripción |
@@ -217,7 +217,7 @@ Ver **`06_powerbi/README_powerbi.md`** para instrucciones completas.
 
 ---
 
-## 📈 Criterios de Evaluación
+## Criterios de Evaluación
 
 | Criterio | Peso |
 |----------|------|
@@ -231,7 +231,7 @@ Ver **`06_powerbi/README_powerbi.md`** para instrucciones completas.
 
 ---
 
-## 🤖 Política de Uso de IA
+## Política de Uso de IA
 
 Este proyecto fue apoyado parcialmente con IA (scripts SQL, estructura inicial de dimensiones, medidas DAX básicas). Todo el código fue revisado, adaptado y ejecutado por los integrantes. El diseño de granularidad, la arquitectura del pipeline y la sustentación son responsabilidad del equipo.
 
