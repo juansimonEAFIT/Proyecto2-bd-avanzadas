@@ -33,13 +33,13 @@ Solución completa de **Business Intelligence** para una empresa minorista con m
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        AZURE VM (SQL Server)                     │
-│                                                                   │
+│                        AWS RDS (SQL Server)                     │
+│                                                                 │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────────┐   │
 │  │  RetailOLTP  │───▶│  BI_Staging  │───▶│    RetailDW      │   │
 │  │  (13 tablas) │    │ (+ CSV/Excel)│    │ (9 Dims + 4 Facts│   │
 │  └──────────────┘    └──────────────┘    └──────────────────┘   │
-│         ▲                   ▲                       │            │
+│         ▲                   ▲                       │           │
 │   Scripts OLTP         Scripts ETL             ETL_Log          │
 └─────────────────────────────────────────────────────────────────┘
                                                       │
@@ -64,7 +64,8 @@ proyecto3/
 ├── 📂 01_oltp/                          ← Base de datos transaccional
 │   ├── 01_create_database.sql           ← Crear BD RetailOLTP
 │   ├── 02_create_tables.sql             ← 13+ tablas OLTP normalizadas
-│   └── 03_generate_data.sql             ← Datos sintéticos (50K ventas)
+│   ├── 03_generate_data.sql             ← Datos sintéticos (50K ventas)
+│   └── 04_generate_data_restante.sql    ← Completar generación de datos
 │
 ├── 📂 02_staging/                       ← Zona de integración intermedia
 │   ├── 01_create_staging.sql            ← Crear BD BI_Staging
@@ -79,15 +80,8 @@ proyecto3/
 │
 ├── 📂 04_etl/                           ← Procedimientos ETL en T-SQL
 │   ├── 00_ETL_Master.sql                ← Orquestador principal
-│   ├── 01_CargarDimFecha.sql
-│   ├── 02_CargarDimCliente.sql
-│   ├── 03_CargarDimProducto.sql
-│   ├── 04_CargarDimTienda.sql
-│   ├── 05_CargarDimVendedor.sql
-│   ├── 06_CargarDimProveedor.sql
-│   ├── 07_CargarDimCanalVenta.sql
-│   ├── 08_CargarDimPromocion.sql
-│   ├── 09_CargarDimGeografia.sql
+│   ├── 01_CargarDimFecha.sql            ← ETL de la dimensión Fecha
+│   ├── 02_CargarDimensiones.sql         ← ETL consolidado de todas las dimensiones (Cliente, Producto, etc.)
 │   ├── 10_CargarFactVentas.sql
 │   ├── 11_CargarFactInventario.sql
 │   ├── 12_CargarFactMetas.sql
@@ -108,6 +102,11 @@ proyecto3/
     ├── diccionario_datos.md             ← Diccionario de todas las tablas
     ├── modelo_dimensional.md            ← Diagrama y descripción del DW
     └── justificacion_modelo.md         ← Respuestas a preguntas del profesor
+│
+└── 📂 08_scripts/                       ← Scripts de apoyo y utilidades
+    ├── load_csvs.py                     ← Carga de CSV a BD
+    ├── .env                             ← Credenciales
+    └── requirements.txt                 ← Dependencias Python
 ```
 
 ---
@@ -116,9 +115,8 @@ proyecto3/
 
 | Herramienta | Versión | Uso |
 |-------------|---------|-----|
-| Azure Account | — | Hosting de la VM |
-| Windows Server | 2022 | SO de la VM |
-| SQL Server | 2022 Developer (gratis) | Motor de base de datos |
+| AWS Account | — | Hosting de la BD en RDS |
+| SQL Server | Express (RDS) | Motor de base de datos |
 | SSMS | 19+ | Administración SQL |
 | Power BI Desktop | Última | Desarrollo del dashboard |
 | Power BI Pro / Trial | — | Publicación en la nube |
@@ -127,7 +125,7 @@ proyecto3/
 
 ## 🚀 Instrucciones de Ejecución
 
-### Paso 1 — Configurar la VM en Azure *(Persona 1)*
+### Paso 1 — Configurar la instancia SQL Server en AWS RDS *(Persona 1)*
 
 Ver **TODO.md → Persona 1** para instrucciones detalladas.
 
@@ -143,6 +141,13 @@ Ver **TODO.md → Persona 1** para instrucciones detalladas.
 
 -- 3. Generar datos sintéticos (puede tardar 10-20 min)
 \01_oltp\03_generate_data.sql
+\01_oltp\04_generate_data_restante.sql
+```
+
+### Paso 2.5 — Cargar Archivos Externos CSV *(Persona 1)*
+```bash
+cd 08_scripts
+python load_csvs.py
 ```
 
 ### Paso 3 — Configurar Staging *(Persona 2)*
@@ -179,10 +184,10 @@ Ver **`06_powerbi/README_powerbi.md`** para instrucciones completas.
 
 | Campo | Valor |
 |-------|-------|
-| IP Pública del Servidor | `[POR COMPLETAR]` |
+| Endpoint AWS RDS | `retailbi-sqlserver.cq05vkzr8bgv.us-east-1.rds.amazonaws.com` |
 | Puerto SQL Server | `1433` |
 | Usuario SQL | `retail_admin` |
-| Contraseña | `[POR COMPLETAR]` |
+| Contraseña | `[Ver credenciales.txt / .env]` |
 | URL Power BI Dashboard | `[POR COMPLETAR]` |
 
 ---
