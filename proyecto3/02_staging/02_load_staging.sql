@@ -288,33 +288,14 @@ GO
 
 -- ============================================================
 -- 9. IMPORTAR FUENTES EXTERNAS CSV
---    Los archivos deben estar en C:\RetailBI\ExternalData\ en la VM
+--    En entornos cloud como AWS RDS no se puede usar BULK INSERT 
+--    desde archivos locales. La insercion a las tablas:
+--    - BI_Staging.dbo.STG_MetasExternas
+--    - BI_Staging.dbo.STG_InventarioFisico
+--    se realiza a traves de script Python o el asistente SSMS Import.
 -- ============================================================
 
--- Metas Mensuales desde CSV externo
-BULK INSERT BI_Staging.dbo.STG_MetasExternas
-FROM 'C:\RetailBI\ExternalData\metas_mensuales.csv'
-WITH (
-    FIRSTROW        = 2,          -- Saltar encabezado
-    FIELDTERMINATOR = ',',
-    ROWTERMINATOR   = '\n',
-    CODEPAGE        = '65001',    -- UTF-8
-    TABLOCK
-);
-PRINT '✔ STG_MetasExternas cargado desde CSV: ' + CAST(@@ROWCOUNT AS VARCHAR) + ' registros';
-GO
-
--- Inventario Físico desde CSV externo
-BULK INSERT BI_Staging.dbo.STG_InventarioFisico
-FROM 'C:\RetailBI\ExternalData\inventario_fisico.csv'
-WITH (
-    FIRSTROW        = 2,
-    FIELDTERMINATOR = ',',
-    ROWTERMINATOR   = '\n',
-    CODEPAGE        = '65001',
-    TABLOCK
-);
-PRINT '✔ STG_InventarioFisico cargado desde CSV: ' + CAST(@@ROWCOUNT AS VARCHAR) + ' registros';
+PRINT '✔ Las fuentes externas (CSV) deben ser importadas vía script Python o SSMS Import en entornos RDS.';
 GO
 
 -- ============================================================

@@ -19,21 +19,7 @@ END
 GO
 
 -- Crear la base de datos
-CREATE DATABASE RetailOLTP
-    ON PRIMARY (
-        NAME = RetailOLTP_data,
-        FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\RetailOLTP.mdf',
-        SIZE = 512MB,
-        MAXSIZE = UNLIMITED,
-        FILEGROWTH = 128MB
-    )
-    LOG ON (
-        NAME = RetailOLTP_log,
-        FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\RetailOLTP_log.ldf',
-        SIZE = 64MB,
-        MAXSIZE = 2GB,
-        FILEGROWTH = 64MB
-    );
+CREATE DATABASE RetailOLTP;
 GO
 
 PRINT 'Base de datos RetailOLTP creada exitosamente.';

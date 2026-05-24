@@ -17,21 +17,7 @@ BEGIN
 END
 GO
 
-CREATE DATABASE RetailDW
-    ON PRIMARY (
-        NAME = RetailDW_data,
-        FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\RetailDW.mdf',
-        SIZE = 1024MB,
-        MAXSIZE = UNLIMITED,
-        FILEGROWTH = 256MB
-    )
-    LOG ON (
-        NAME = RetailDW_log,
-        FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\RetailDW_log.ldf',
-        SIZE = 128MB,
-        MAXSIZE = 4GB,
-        FILEGROWTH = 128MB
-    );
+CREATE DATABASE RetailDW;
 GO
 
 ALTER DATABASE RetailDW SET RECOVERY SIMPLE;

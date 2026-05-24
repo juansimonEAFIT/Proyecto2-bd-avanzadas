@@ -481,6 +481,12 @@ PRINT '✔ Compras y DetalleCompras insertadas: 500 órdenes';
 DECLARE @dev INT = 1;
 DECLARE @venta_rand INT;
 DECLARE @det_rand INT;
+DECLARE @prod INT;
+DECLARE @cant INT;
+DECLARE @total_l DECIMAL(18,2);
+DECLARE @tienda INT;
+DECLARE @cliente INT;
+DECLARE @fecha_venta DATETIME;
 DECLARE @motivos TABLE (m VARCHAR(200));
 INSERT INTO @motivos VALUES
 ('Producto defectuoso'),('Talla incorrecta'),('Color diferente al mostrado'),
@@ -492,7 +498,8 @@ BEGIN
     -- Tomar una venta aleatoria completada
     SELECT TOP 1 @venta_rand = v.VentaID, @det_rand = dv.DetalleID,
            @prod = dv.ProductoID, @cant = dv.Cantidad,
-           @total_l = dv.TotalLinea, @tienda = v.TiendaID, @cliente = v.ClienteID
+           @total_l = dv.TotalLinea, @tienda = v.TiendaID, @cliente = v.ClienteID,
+           @fecha_venta = v.FechaVenta
     FROM Ventas v
     JOIN DetalleVentas dv ON v.VentaID = dv.VentaID
     WHERE v.Estado = 'Completada'
@@ -504,8 +511,7 @@ BEGIN
     INSERT INTO Devoluciones (VentaID, DetalleID, ClienteID, TiendaID, ProductoID,
                               FechaDevolucion, MotivoDevolucion, CantidadDevuelta, ValorDevuelto)
     VALUES (@venta_rand, @det_rand, @cliente, @tienda, @prod,
-            DATEADD(DAY, ABS(CHECKSUM(NEWID())) % 30 + 1,
-                (SELECT FechaVenta FROM Ventas WHERE VentaID = @venta_rand)),
+            DATEADD(DAY, ABS(CHECKSUM(NEWID())) % 30 + 1, @fecha_venta),
             @motivo_rand,
             1 + ABS(CHECKSUM(NEWID())) % @cant,
             ROUND(@total_l * (0.5 + (ABS(CHECKSUM(NEWID())) % 51) * 0.01), 2));
@@ -539,7 +545,7 @@ BEGIN
             BEGIN
                 SET @meta_v = ROUND(
                     (50000000 + ABS(CHECKSUM(NEWID())) % 150000001) *
-                    (1 + (@mes_m IN (11,12)) * 0.30),  -- boost navideño
+                    (1 + CASE WHEN @mes_m IN (11,12) THEN 1 ELSE 0 END * 0.30),  -- boost navideño
                     -4
                 );
 
