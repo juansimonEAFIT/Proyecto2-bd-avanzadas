@@ -39,15 +39,15 @@ BEGIN
         PRINT CHAR(13) + '--- ' + @paso + ' ---';
 
         -- Limpiar staging para carga fresca
-        TRUNCATE TABLE BI_Staging.dbo.STG_DetalleVentas;
-        TRUNCATE TABLE BI_Staging.dbo.STG_Ventas;
-        TRUNCATE TABLE BI_Staging.dbo.STG_Clientes;
-        TRUNCATE TABLE BI_Staging.dbo.STG_Productos;
-        TRUNCATE TABLE BI_Staging.dbo.STG_Inventario;
-        TRUNCATE TABLE BI_Staging.dbo.STG_Metas;
-        TRUNCATE TABLE BI_Staging.dbo.STG_Devoluciones;
-        TRUNCATE TABLE BI_Staging.dbo.STG_Compras;
-        PRINT '  ✔ Staging limpiado';
+        -- [COMENTADO] TRUNCATE TABLE BI_Staging.dbo.STG_DetalleVentas;
+        -- [COMENTADO] TRUNCATE TABLE BI_Staging.dbo.STG_Ventas;
+        -- [COMENTADO] TRUNCATE TABLE BI_Staging.dbo.STG_Clientes;
+        -- [COMENTADO] TRUNCATE TABLE BI_Staging.dbo.STG_Productos;
+        -- [COMENTADO] TRUNCATE TABLE BI_Staging.dbo.STG_Inventario;
+        -- [COMENTADO] TRUNCATE TABLE BI_Staging.dbo.STG_Metas;
+        -- [COMENTADO] TRUNCATE TABLE BI_Staging.dbo.STG_Devoluciones;
+        -- [COMENTADO] TRUNCATE TABLE BI_Staging.dbo.STG_Compras;
+        PRINT '  ✔ (Omitido) Staging NO se limpió para usar los datos ya validados';
 
         -- ====================================================
         -- FASE 1: Cargar Dimensiones
@@ -97,13 +97,15 @@ BEGIN
         DECLARE @total_devs     INT = (SELECT COUNT(*) FROM FactDevoluciones);
         DECLARE @total_cargados INT = @total_ventas + @total_inv + @total_metas + @total_devs;
 
-        EXEC sp_ETL_Log_Finalizar
-            @LogID, 'COMPLETADO',
-            @total_cargados, @total_cargados, 0,
-            'FactVentas=' + CAST(@total_ventas AS VARCHAR) +
+        DECLARE @msg VARCHAR(MAX) = 'FactVentas=' + CAST(@total_ventas AS VARCHAR) +
             ' | FactInv=' + CAST(@total_inv AS VARCHAR) +
             ' | FactMetas=' + CAST(@total_metas AS VARCHAR) +
             ' | FactDevs=' + CAST(@total_devs AS VARCHAR);
+
+        EXEC sp_ETL_Log_Finalizar
+            @LogID, 'COMPLETADO',
+            @total_cargados, @total_cargados, 0,
+            @msg;
 
         PRINT '';
         PRINT '=======================================================';

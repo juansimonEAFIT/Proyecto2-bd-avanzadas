@@ -144,8 +144,8 @@ BEGIN
 
     END TRY
     BEGIN CATCH
-        EXEC sp_ETL_Log_Finalizar @LogID, 'ERROR', @leidos, @cargados, @rechazados,
-            ERROR_MESSAGE();
+        DECLARE @errMsg VARCHAR(MAX) = ERROR_MESSAGE();
+        EXEC sp_ETL_Log_Finalizar @LogID, 'ERROR', @leidos, @cargados, @rechazados, @errMsg;
         THROW;
     END CATCH
 END;

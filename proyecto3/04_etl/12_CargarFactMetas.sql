@@ -4,7 +4,6 @@
 -- Persona 3: Juan Simon Ospina
 -- Script: 12_CargarFactMetas.sql
 -- Granularidad: mes × tienda × categoría (× vendedor opcional)
--- ============================================================
 
 USE RetailDW;
 GO
@@ -86,7 +85,8 @@ BEGIN
         PRINT '✔ CargarFactMetasComerciales: ' + CAST(@cargados AS VARCHAR) + ' registros cargados';
     END TRY
     BEGIN CATCH
-        EXEC sp_ETL_Log_Finalizar @LogID, 'ERROR', @leidos, @cargados, @rechazados, ERROR_MESSAGE();
+        DECLARE @errMsg VARCHAR(MAX) = ERROR_MESSAGE();
+        EXEC sp_ETL_Log_Finalizar @LogID, 'ERROR', @leidos, @cargados, @rechazados, @errMsg;
         THROW;
     END CATCH
 END;

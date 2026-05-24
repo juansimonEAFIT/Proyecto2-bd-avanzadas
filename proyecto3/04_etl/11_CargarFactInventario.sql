@@ -5,7 +5,6 @@
 -- Script: 11_CargarFactInventario.sql
 -- Granularidad: día × producto × tienda
 -- Medidas: StockFinal (SEMI-ADITIVA), Entradas/Salidas (ADITIVAS)
--- ============================================================
 
 USE RetailDW;
 GO
@@ -52,7 +51,8 @@ BEGIN
         PRINT '✔ CargarFactInventarioDiario: ' + CAST(@cargados AS VARCHAR) + ' registros cargados';
     END TRY
     BEGIN CATCH
-        EXEC sp_ETL_Log_Finalizar @LogID, 'ERROR', @leidos, @cargados, @rechazados, ERROR_MESSAGE();
+        DECLARE @errMsg VARCHAR(MAX) = ERROR_MESSAGE();
+        EXEC sp_ETL_Log_Finalizar @LogID, 'ERROR', @leidos, @cargados, @rechazados, @errMsg;
         THROW;
     END CATCH
 END;

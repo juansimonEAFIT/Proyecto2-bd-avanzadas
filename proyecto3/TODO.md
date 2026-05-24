@@ -120,41 +120,41 @@
 > Prerequisito: Personas 1 y 2 deben haber terminado. El DW debe tener dimensiones cargadas.
 
 **3.1 Cargar Tablas de Hechos**
-- [ ] Verificar que las dimensiones estan cargadas antes de comenzar
-- [ ] Ejecutar 04_etl/10_CargarFactVentas.sql
-- [ ] Ejecutar 04_etl/11_CargarFactInventario.sql
-- [ ] Ejecutar 04_etl/12_CargarFactMetas.sql
-- [ ] Ejecutar 04_etl/13_CargarFactDevoluciones.sql
-- [ ] Verificar conteos en cada tabla de hechos
-- [ ] Verificar que no hay surrogate keys sin resolver (valor -1)
+- [x] Verificar que las dimensiones estan cargadas antes de comenzar
+- [x] Ejecutar 04_etl/10_CargarFactVentas.sql
+- [x] Ejecutar 04_etl/11_CargarFactInventario.sql
+- [x] Ejecutar 04_etl/12_CargarFactMetas.sql
+- [x] Ejecutar 04_etl/13_CargarFactDevoluciones.sql
+- [x] Verificar conteos en cada tabla de hechos
+- [x] Verificar que no hay surrogate keys sin resolver (valor -1)
 
 **3.2 Verificar y Analizar el ETL_Log**
-- [ ] Revisar todos los registros del ETL_Log
-- [ ] Confirmar que no hay procesos con Estado = ERROR
-- [ ] Calcular tasa de exito (registros cargados / leidos)
-- [ ] Identificar y documentar registros rechazados
-- [ ] Calcular tiempos de ejecucion de cada proceso
+- [x] Revisar todos los registros del ETL_Log
+- [x] Confirmar que no hay procesos con Estado = ERROR
+- [x] Calcular tasa de exito (registros cargados / leidos)
+- [x] Identificar y documentar registros rechazados
+- [x] Calcular tiempos de ejecucion de cada proceso
 
 **3.3 Ejecutar el Orquestador Maestro ETL (Prueba End-to-End)**
-- [ ] Limpiar (TRUNCATE) todas las tablas del DW
-- [ ] Ejecutar 04_etl/00_ETL_Master.sql desde cero
-- [ ] Confirmar que el pipeline corre sin errores de inicio a fin
-- [ ] Verificar que el ETL_Log registra todos los pasos
-- [ ] Comparar conteos finales: OLTP vs DW
+- [x] Limpiar (TRUNCATE) todas las tablas del DW
+- [x] Ejecutar 04_etl/00_ETL_Master.sql desde cero
+- [x] Confirmar que el pipeline corre sin errores de inicio a fin
+- [x] Verificar que el ETL_Log registra todos los pasos
+- [x] Comparar conteos finales: OLTP vs DW
 
 **3.4 Ejecutar Validaciones de Calidad del DW**
-- [ ] Ejecutar 04_etl/14_ValidarCalidadDatos.sql
-- [ ] Verificar que no hay NULLs en medidas criticas de FactVentas
-- [ ] Verificar integridad referencial hechos → dimensiones
-- [ ] Verificar rangos de fechas en DimFecha
-- [ ] Guardar capturas de pantalla de las validaciones como evidencias
+- [x] Ejecutar 04_etl/14_ValidarCalidadDatos.sql
+- [x] Verificar que no hay NULLs en medidas criticas de FactVentas
+- [x] Verificar integridad referencial hechos → dimensiones
+- [x] Verificar rangos de fechas en DimFecha
+- [x] Guardar capturas de pantalla de las validaciones como evidencias
 
 **3.5 Consultas Analiticas de Prueba del DW**
-- [ ] Ejecutar consulta de ventas por tienda y mes
-- [ ] Ejecutar consulta de top 10 productos por margen
-- [ ] Ejecutar consulta de cumplimiento de metas
-- [ ] Ejecutar consulta de rotacion de inventario
-- [ ] Notificar a Persona 4 (Daniel) que el DW esta listo
+- [x] Ejecutar consulta de ventas por tienda y mes
+- [x] Ejecutar consulta de top 10 productos por margen
+- [x] Ejecutar consulta de cumplimiento de metas
+- [x] Ejecutar consulta de rotacion de inventario
+- [x] Notificar a Persona 4 (Daniel) que el DW esta listo
 
 ---
 

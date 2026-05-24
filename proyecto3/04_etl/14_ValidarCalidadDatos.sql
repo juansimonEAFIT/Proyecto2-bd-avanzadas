@@ -51,10 +51,10 @@ SELECT
 
 UNION ALL SELECT
     'Total Ventas ($)',
-    CAST((SELECT SUM(TotalLinea) FROM RetailOLTP.dbo.DetalleVentas) AS INT),
-    CAST((SELECT SUM(ValorVenta) FROM RetailDW.dbo.FactVentas)      AS INT),
-    CAST((SELECT SUM(TotalLinea) FROM RetailOLTP.dbo.DetalleVentas) AS INT) -
-    CAST((SELECT SUM(ValorVenta) FROM RetailDW.dbo.FactVentas)      AS INT)
+    CAST((SELECT SUM(TotalLinea) FROM RetailOLTP.dbo.DetalleVentas) AS BIGINT),
+    CAST((SELECT SUM(ValorVenta) FROM RetailDW.dbo.FactVentas)      AS BIGINT),
+    CAST((SELECT SUM(TotalLinea) FROM RetailOLTP.dbo.DetalleVentas) AS BIGINT) -
+    CAST((SELECT SUM(ValorVenta) FROM RetailDW.dbo.FactVentas)      AS BIGINT)
 
 UNION ALL SELECT
     'Registros inventario',
