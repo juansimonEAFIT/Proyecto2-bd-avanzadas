@@ -35,7 +35,7 @@ BEGIN
                     @f,
                     YEAR(@f),
                     DATEPART(QUARTER, @f),
-                    'Q' + CAST(DATEPART(QUARTER, @f) AS VARCHAR),
+                    'Q' + CAST(DATEPART(QUARTER, @f) AS VARCHAR(10)),
                     MONTH(@f),
                     CASE MONTH(@f)
                         WHEN 1 THEN 'Enero'     WHEN 2 THEN 'Febrero'
@@ -45,27 +45,27 @@ BEGIN
                         WHEN 9 THEN 'Septiembre' WHEN 10 THEN 'Octubre'
                         WHEN 11 THEN 'Noviembre' ELSE 'Diciembre'
                     END,
-                    LEFT(CASE MONTH(@f)
+                    CASE MONTH(@f)
                         WHEN 1 THEN 'Ene' WHEN 2 THEN 'Feb' WHEN 3 THEN 'Mar'
                         WHEN 4 THEN 'Abr' WHEN 5 THEN 'May' WHEN 6 THEN 'Jun'
                         WHEN 7 THEN 'Jul' WHEN 8 THEN 'Ago' WHEN 9 THEN 'Sep'
-                        WHEN 10 THEN 'Oct' WHEN 11 THEN 'Nov' ELSE 'Dic' END, 3),
-                    DATEPART(ISO_WEEK, @f),
+                        WHEN 10 THEN 'Oct' WHEN 11 THEN 'Nov' ELSE 'Dic' END,
+                    DATEPART(WEEK, @f),
                     DAY(@f),
                     DATEPART(WEEKDAY, @f),
                     CASE DATEPART(WEEKDAY, @f)
                         WHEN 1 THEN 'Domingo'   WHEN 2 THEN 'Lunes'
-                        WHEN 3 THEN 'Martes'    WHEN 4 THEN 'Miércoles'
+                        WHEN 3 THEN 'Martes'    WHEN 4 THEN 'Miercoles'
                         WHEN 5 THEN 'Jueves'    WHEN 6 THEN 'Viernes'
-                        ELSE 'Sábado'
+                        ELSE 'Sabado'
                     END,
-                    LEFT(CASE DATEPART(WEEKDAY, @f)
+                    CASE DATEPART(WEEKDAY, @f)
                         WHEN 1 THEN 'Dom' WHEN 2 THEN 'Lun' WHEN 3 THEN 'Mar'
-                        WHEN 4 THEN 'Mié' WHEN 5 THEN 'Jue' WHEN 6 THEN 'Vie'
-                        ELSE 'Sáb' END, 3),
+                        WHEN 4 THEN 'Mie' WHEN 5 THEN 'Jue' WHEN 6 THEN 'Vie'
+                        ELSE 'Sab' END,
                     CASE WHEN DATEPART(WEEKDAY, @f) IN (1, 7) THEN 1 ELSE 0 END,
                     YEAR(@f) * 100 + MONTH(@f),
-                    CAST(YEAR(@f) AS VARCHAR) + '-Q' + CAST(DATEPART(QUARTER, @f) AS VARCHAR)
+                    CAST(YEAR(@f) AS VARCHAR(10)) + '-Q' + CAST(DATEPART(QUARTER, @f) AS VARCHAR(10))
                 );
                 SET @cnt = @cnt + 1;
             END
@@ -74,24 +74,25 @@ BEGIN
         END
 
         -- Marcar feriados colombianos más importantes
-        UPDATE DimFecha SET EsFeriado = 1, NombreFeriado = 'Año Nuevo'
+        UPDATE DimFecha SET EsFeriado = 1, NombreFeriado = 'Ano Nuevo'
         WHERE MesNum = 1 AND DiaMes = 1;
-        UPDATE DimFecha SET EsFeriado = 1, NombreFeriado = 'Día del Trabajo'
+        UPDATE DimFecha SET EsFeriado = 1, NombreFeriado = 'Dia del Trabajo'
         WHERE MesNum = 5 AND DiaMes = 1;
         UPDATE DimFecha SET EsFeriado = 1, NombreFeriado = 'Grito de Independencia'
         WHERE MesNum = 7 AND DiaMes = 20;
-        UPDATE DimFecha SET EsFeriado = 1, NombreFeriado = 'Día de la Independencia'
+        UPDATE DimFecha SET EsFeriado = 1, NombreFeriado = 'Dia de la Independencia'
         WHERE MesNum = 8 AND DiaMes = 7;
-        UPDATE DimFecha SET EsFeriado = 1, NombreFeriado = 'Día de la Raza'
+        UPDATE DimFecha SET EsFeriado = 1, NombreFeriado = 'Dia de la Raza'
         WHERE MesNum = 10 AND DiaMes = 12;
         UPDATE DimFecha SET EsFeriado = 1, NombreFeriado = 'Navidad'
         WHERE MesNum = 12 AND DiaMes = 25;
 
         EXEC sp_ETL_Log_Finalizar @LogID, 'COMPLETADO', @cnt, @cnt, 0, NULL;
-        PRINT '✔ CargarDimFecha completado: ' + CAST(@cnt AS VARCHAR) + ' días cargados';
+        PRINT '[OK] CargarDimFecha completado: ' + CAST(@cnt AS VARCHAR(10)) + ' dias cargados';
     END TRY
     BEGIN CATCH
-        EXEC sp_ETL_Log_Finalizar @LogID, 'ERROR', 0, 0, 0, ERROR_MESSAGE();
+        DECLARE @ErrorMessage VARCHAR(MAX) = ERROR_MESSAGE();
+        EXEC sp_ETL_Log_Finalizar @LogID, 'ERROR', 0, 0, 0, @ErrorMessage;
         THROW;
     END CATCH
 END;

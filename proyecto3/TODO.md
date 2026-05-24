@@ -76,42 +76,42 @@
 > Prerequisito: Persona 1 debe haber terminado y compartido: endpoint RDS, usuario `retail_admin` y contrasena.
 
 **2.1 Crear la Base de Datos de Staging**
-- [ ] Conectarse al RDS desde SSMS:
+- [x] Conectarse al RDS desde SSMS:
   - Server name: `[ENDPOINT_RDS],1433`
   - Authentication: SQL Server Authentication
   - Login: `retail_admin`
-- [ ] Ejecutar 02_staging/01_create_staging.sql
-- [ ] Verificar que la base de datos BI_Staging fue creada
-- [ ] Confirmar que las 11 tablas de staging existen (incluida QA_Reporte)
+- [x] Ejecutar 02_staging/01_create_staging.sql
+- [x] Verificar que la base de datos BI_Staging fue creada
+- [x] Confirmar que las 11 tablas de staging existen (incluida QA_Reporte)
 
 **2.2 Cargar Datos del OLTP al Staging**
-- [ ] Ejecutar 02_staging/02_load_staging.sql
-- [ ] Verificar que los datos OLTP se copiaron al Staging (INSERT INTO ... SELECT)
-- [ ] Verificar que los datos de los CSV externos estan en STG_MetasExternas y STG_InventarioFisico
-- [ ] Comparar conteos: Staging vs OLTP
+- [x] Ejecutar 02_staging/02_load_staging.sql
+- [x] Verificar que los datos OLTP se copiaron al Staging (INSERT INTO ... SELECT)
+- [x] Verificar que los datos de los CSV externos estan en STG_MetasExternas y STG_InventarioFisico
+- [x] Comparar conteos: Staging vs OLTP
 
 **2.3 Aplicar Transformaciones y Validaciones de Calidad**
-- [ ] Ejecutar 02_staging/03_quality_checks.sql
-- [ ] Revisar la tabla QA_Reporte en busca de problemas
-- [ ] Verificar limpieza de nulos en campos criticos
-- [ ] Verificar estandarizacion de ciudades y regiones
-- [ ] Verificar eliminacion de duplicados
-- [ ] Documentar hallazgos en 07_docs/evidencias_validacion.md
+- [x] Ejecutar 02_staging/03_quality_checks.sql
+- [x] Revisar la tabla QA_Reporte en busca de problemas
+- [x] Verificar limpieza de nulos en campos criticos
+- [x] Verificar estandarizacion de ciudades y regiones
+- [x] Verificar eliminacion de duplicados
+- [x] Documentar hallazgos en 07_docs/evidencias_validacion.md
 
 **2.4 Crear la Estructura del Data Warehouse**
-- [ ] Ejecutar 03_datawarehouse/01_create_dw_database.sql
-- [ ] Ejecutar 03_datawarehouse/02_create_dimensions.sql
-- [ ] Ejecutar 03_datawarehouse/03_create_facts.sql
-- [ ] Ejecutar 03_datawarehouse/04_etl_log.sql
-- [ ] Verificar que existen 9 dimensiones y 4 tablas de hechos
-- [ ] Verificar que la tabla ETL_Log fue creada
+- [x] Ejecutar 03_datawarehouse/01_create_dw_database.sql
+- [x] Ejecutar 03_datawarehouse/02_create_dimensions.sql
+- [x] Ejecutar 03_datawarehouse/03_create_facts.sql
+- [x] Ejecutar 03_datawarehouse/04_etl_log.sql
+- [x] Verificar que existen 9 dimensiones y 4 tablas de hechos
+- [x] Verificar que la tabla ETL_Log fue creada
 
 **2.5 Cargar Dimensiones al Data Warehouse**
-- [ ] Ejecutar 04_etl/01_CargarDimFecha.sql
-- [ ] Ejecutar los stored procedures del archivo 04_etl/02_CargarDimensiones.sql
-- [ ] Verificar conteos en cada dimension
-- [ ] Revisar ETL_Log para confirmar ausencia de errores
-- [ ] Notificar a Persona 3 (Juan Simon) que las dimensiones estan listas
+- [x] Ejecutar 04_etl/01_CargarDimFecha.sql
+- [x] Ejecutar los stored procedures del archivo 04_etl/02_CargarDimensiones.sql
+- [x] Verificar conteos en cada dimension
+- [x] Revisar ETL_Log para confirmar ausencia de errores
+- [x] Notificar a Persona 3 (Juan Simon) que las dimensiones estan listas
 
 ---
 

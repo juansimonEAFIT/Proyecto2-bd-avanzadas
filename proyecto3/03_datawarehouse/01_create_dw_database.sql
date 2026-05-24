@@ -9,14 +9,7 @@
 USE master;
 GO
 
-IF EXISTS (SELECT name FROM sys.databases WHERE name = 'RetailDW')
-BEGIN
-    ALTER DATABASE RetailDW SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE RetailDW;
-    PRINT 'Base de datos RetailDW eliminada para re-creación.';
-END
-GO
-
+-- La eliminación previa de RetailDW se maneja de forma segura desde el script de automatización Python
 CREATE DATABASE RetailDW;
 GO
 

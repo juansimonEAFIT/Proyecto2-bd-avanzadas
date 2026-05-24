@@ -25,7 +25,7 @@ BEGIN
                 UPPER(LTRIM(RTRIM(Ciudad))),
                 UPPER(LTRIM(RTRIM(Departamento))),
                 'ANDINA'
-            FROM BI_Staging.dbo.STG_Compras
+            FROM RetailOLTP.dbo.Proveedores
         ) AS src
         ON tgt.NombreCiudad = src.NombreCiudad AND tgt.Departamento = src.Departamento
         WHEN NOT MATCHED THEN
