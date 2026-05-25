@@ -180,15 +180,14 @@ Ver **`06_powerbi/README_powerbi.md`** para instrucciones completas.
 
 ---
 
-## Acceso al Servidor (completar tras deploy)
+## Acceso al Servidor
 
 | Campo | Valor |
 |-------|-------|
-| Endpoint AWS RDS | `retailbi-sqlserver.cq05vkzr8bgv.us-east-1.rds.amazonaws.com` |
+| Endpoint AWS RDS | `retailbi-sqlserver-xlarge2.cq05vkzr8bgv.us-east-1.rds.amazonaws.com` |
 | Puerto SQL Server | `1433` |
 | Usuario SQL | `retail_admin` |
-| Contraseña | `[Ver credenciales.txt / .env]` |
-| URL Power BI Dashboard | `[POR COMPLETAR]` |
+| URL Power BI Dashboard | `https://app.powerbi.com/view?r=eyJrIjoiMjA3NDhjNDktZTBjNi00OTcxLTgwMDgtNTBmYzczOGZlMTBlIiwidCI6Ijk5ZjdiNTVlLTljYmUtNDY3Yi04MTQzLTkxOTc4MjkxOGFmYiIsImMiOjR9` |
 
 ---
 
