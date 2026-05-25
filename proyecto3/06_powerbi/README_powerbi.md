@@ -1,6 +1,6 @@
 # Power BI — Instrucciones de Conexión y Publicación
 
-**Persona responsable:** Daniel Arcila (Persona 4)
+**Persona responsable:** Daniel Arcila Persona 4
 
 ---
 
@@ -128,23 +128,6 @@ Crear todas las medidas en `_Medidas` (ver `medidas_dax.md`).
 - Botones: "Drill Up" / "Drill Down" con acción de página
 - Slicers: Canal, Vendedor
 
----
-
-## Paso 5 — Aplicar Tema Visual
-
-1. Ir a **"View"** → **"Themes"** → **"Customize current theme"**
-2. Configurar colores corporativos sugeridos:
-   ```
-   Color primario:    #1B4F8A  (azul oscuro)
-   Color secundario:  #27AE60  (verde)
-   Color acento:      #F39C12  (ámbar)
-   Fondo:             #F8F9FA  (gris muy claro)
-   Texto:             #2C3E50  (azul oscuro casi negro)
-   ```
-3. Fuente recomendada: **Segoe UI** (nativa de Power BI)
-
----
-
 ## Paso 6 — Publicar en Power BI Service
 
 1. En Power BI Desktop → **"Home"** → **"Publish"**
@@ -160,11 +143,10 @@ Crear todas las medidas en `_Medidas` (ver `medidas_dax.md`).
 
 | Campo | Valor |
 |-------|-------|
-| IP del servidor | `[COMPLETAR]` |
 | Puerto | `1433` |
 | Base de datos | `RetailDW` |
 | Usuario | `retail_admin` |
-| URL Power BI publicada | `[COMPLETAR]` |
+| URL Power BI publicada | `https://app.powerbi.com/view?r=eyJrIjoiMjA3NDhjNDktZTBjNi00OTcxLTgwMDgtNTBmYzczOGZlMTBlIiwidCI6Ijk5ZjdiNTVlLTljYmUtNDY3Yi04MTQzLTkxOTc4MjkxOGFmYiIsImMiOjR9` |
 
 ---
 
